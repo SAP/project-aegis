@@ -1,0 +1,3082 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Open-core guardrail library for A2A agent executors">
+      
+      
+      
+      
+        <link rel="prev" href="../content-filter/">
+      
+      
+        <link rel="next" href="../sql-injection-detector/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Formula Injection Detector - Project Aegis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#formulainjectiondetector" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Project Aegis" class="md-header__button md-logo" aria-label="Project Aegis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Project Aegis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Formula Injection Detector
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SAP/project-aegis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SAP/project-aegis
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Documentation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cookbook/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Cookbook
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Validators
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../changelog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Project Aegis" class="md-nav__button md-logo" aria-label="Project Aegis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3"/></svg>
+
+    </a>
+    Project Aegis
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SAP/project-aegis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SAP/project-aegis
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Documentation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../a2a-wrapper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A2A Wrapper
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../mutation-guard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MutationGuard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cookbook
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cookbook
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/agent-executor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AgentExecutor Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/agent-stream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    agent.stream() Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/standalone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standalone Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validators
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Validators
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../custom-validators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Validators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../authoring-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Detection
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../length-validator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Length Validator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompt-leakage-check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompt Leakage Check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../size-validator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Size Validator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../content-filter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Content Filter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formula Injection Detector
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formula Injection Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Description">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#obfuscation-is-decoded-before-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Obfuscation is decoded before detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it flags
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-safety-ceiling-read-before-you-rely-on-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The safety ceiling — read before you rely on this
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructor-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#failure-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failure Details
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aegis.validators.detection.FormulaInjectionDetector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FormulaInjectionDetector
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FormulaInjectionDetector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aegis.validators.detection.FormulaInjectionDetector.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sql-injection-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Injection Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xss-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XSS Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xxe-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XXE Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mutation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mutation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mutation/html-sanitizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTML Sanitizer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Description">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#obfuscation-is-decoded-before-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Obfuscation is decoded before detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it flags
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-safety-ceiling-read-before-you-rely-on-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The safety ceiling — read before you rely on this
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructor-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#failure-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failure Details
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aegis.validators.detection.FormulaInjectionDetector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FormulaInjectionDetector
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FormulaInjectionDetector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aegis.validators.detection.FormulaInjectionDetector.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="formulainjectiondetector">FormulaInjectionDetector<a class="headerlink" href="#formulainjectiondetector" title="Permanent link">&para;</a></h1>
+<p>Flag input that would begin a spreadsheet formula if written into a CSV/TSV cell (CSV injection).</p>
+<h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
+<p><code>FormulaInjectionDetector</code> is a deterministic, text-only, <strong>detect-only</strong> validator. It runs under
+<a href="../../../guard/"><code>Guard</code></a> and reports a failure when a content item, written into a
+spreadsheet-imported cell (CSV, TSV, and the like), would begin a formula and execute when the file
+is opened — <code>=cmd|'/C calc'!A0</code>, <code>=HYPERLINK(...)</code>. It never changes the content. Reach for it on
+input or model output that could later be exported to a spreadsheet.</p>
+<p>"CSV injection" (CWE-1236 / OWASP) is the common alias. The check is about a <em>formula initiator</em> at
+a cell's start, not about CSV structure, so the validator is named for the payload rather than the
+transport; CSV <strong>structural</strong> injection (forging columns/rows) is a separate concern.</p>
+<p><code>Guard</code> runs its registered validators concurrently, so a failure here does <strong>not</strong> short-circuit or
+skip other validators.</p>
+<h3 id="obfuscation-is-decoded-before-detection">Obfuscation is decoded before detection<a class="headerlink" href="#obfuscation-is-decoded-before-detection" title="Permanent link">&para;</a></h3>
+<p>Real payloads hide behind encoding layers, so each item is <strong>preprocessed</strong> before inspection:
+invisible/zero-width control characters are stripped, then URL-percent, HTML-entity, JavaScript
+<code>\uXXXX</code>/<code>\xXX</code>, and CSS <code>\3C</code> escapes are decoded repeatedly until the text stops changing
+(bounded). Without this, <code>%3Dcmd</code> or <code>&amp;#61;cmd</code> would hide the leading <code>=</code>. Preprocessing does
+<strong>not</strong> NFKC-fold, so the full-width initiators <code>＝＋－＠</code> are matched explicitly. Both passes can be
+disabled via the constructor when the input's encoding is fully trusted.</p>
+<h3 id="what-it-flags">What it flags<a class="headerlink" href="#what-it-flags" title="Permanent link">&para;</a></h3>
+<p>For each cell candidate the validator decodes obfuscation, skips one optional leading structural <code>"</code>
+and any leading padding (spaces, NBSP, zero-width, …), then inspects the <strong>effective start</strong>:</p>
+<ul>
+<li><code>ascii</code> — a leading <code>=</code>, <code>+</code>, <code>-</code>, or <code>@</code> (CWE-1236 / OWASP). The default safety floor; narrowable
+  via <code>ascii_triggers</code>.</li>
+<li><code>fullwidth</code> — a leading full-width initiator <code>＝＋－＠</code> (OWASP), matched explicitly.</li>
+<li><code>control</code> — a leading TAB, CR, or LF (OWASP). A control prefix is itself a trigger, so it is never
+  treated as padding.</li>
+</ul>
+<p>Any leading trigger flags — there is <strong>no</strong> numeric, function-name, or handle exception (no universal
+safe-suffix grammar exists), so <code>-5</code>, <code>+1 650 555 0100</code>, and <code>@mention</code> fail by default. A leading
+<code>'</code> (the spreadsheet neutralizer) passes. On a hit, the <code>formula_shape</code> detail names a recognized
+high-impact shape (<code>dde_pipe_bang</code>, <code>hyperlink</code>, <code>dde</code>) so a caller can <em>raise</em> severity on it.</p>
+<p><code>formula_shape</code> is a <strong>best-effort lexical hint, not a formula parser</strong>. A recognized shape can
+over-match a look-alike token inside a string literal (<code>="not really HYPERLINK("</code>). A value of
+<code>unknown</code> means none of the three recognized shapes matched — it is <strong>not</strong> a safety signal: other
+dangerous formulas, including exfiltration functions like <code>=WEBSERVICE(...)</code> and <code>=IMPORTXML(...)</code>,
+report <code>unknown</code>. Use a recognized shape to raise severity; never treat <code>unknown</code> as safe. The marker
+never changes the verdict, which is already a failure.</p>
+<p>All patterns are linear (no nested quantifier that can backtrack), so the validator adds no ReDoS
+surface of its own.</p>
+<h3 id="the-safety-ceiling-read-before-you-rely-on-this">The safety ceiling — read before you rely on this<a class="headerlink" href="#the-safety-ceiling-read-before-you-rely-on-this" title="Permanent link">&para;</a></h3>
+<p>This validator is <strong>defense-in-depth, not a primary control</strong>. The authoritative fix is
+neutralization at the CSV serializer, using a consumer-specific text neutralizer such as a leading
+<code>'</code> where the opening application supports it. Ordinary CSV quoting and escaping are <strong>not</strong> enough:
+they keep the field structurally intact, but a quoted value like <code>"=1+1"</code> still evaluates as a
+formula when the file is opened. A guardrail cannot know whether the text will ever become a
+spreadsheet cell; a passed result means "no leading formula initiator under this policy", never
+"safe in every spreadsheet".</p>
+<p>On general prose the strict policy's false-positive rate is high — <code>-</code>, <code>+</code>, and <code>@</code> begin ordinary
+text constantly. This is the accepted default cost; narrow <code>ascii_triggers</code> (e.g. to <code>"="</code>) for
+prose-heavy deployments, or use <code>formula_shape</code> to raise severity on a recognized command shape.</p>
+<h2 id="constructor-parameters">Constructor Parameters<a class="headerlink" href="#constructor-parameters" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ascii_triggers</code></td>
+<td><code>str</code></td>
+<td><code>"=+-@"</code></td>
+<td>Class-A initiators to flag, drawn from <code>=+-@</code>. Narrow it (e.g. <code>"="</code>) to cut the false-positive cost on prose. Must be non-empty and contain only those four characters.</td>
+</tr>
+<tr>
+<td><code>detect_fullwidth</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Flag the full-width initiators <code>＝＋－＠</code> (class F).</td>
+</tr>
+<tr>
+<td><code>detect_control_prefix</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Flag a leading TAB/CR/LF (class C).</td>
+</tr>
+<tr>
+<td><code>skip_leading_padding</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Skip leading padding to the effective start before matching, so a padded trigger (<code>"   =SUM(...)"</code>) is still caught.</td>
+</tr>
+<tr>
+<td><code>skip_leading_quote</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Skip one leading structural <code>"</code> before matching, so a quoted <code>"=cmd...</code> is still caught.</td>
+</tr>
+<tr>
+<td><code>detect_formula_shape</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Compute the <code>formula_shape</code> severity marker (DDE / HYPERLINK) on a hit.</td>
+</tr>
+<tr>
+<td><code>strip_invisible_chars</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Strip zero-width/control characters before matching.</td>
+</tr>
+<tr>
+<td><code>decode_obfuscation</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Decode URL/HTML/JS/CSS encoding layers before matching.</td>
+</tr>
+<tr>
+<td><code>max_input_chars</code></td>
+<td><code>int \| None</code></td>
+<td><code>1048576</code></td>
+<td>Resource valve (1 MiB of characters by default). When the rendered view exceeds it, the input is rejected with <code>FORMULA_INJECTION_INPUT_TOO_LARGE</code> rather than preprocessed and scanned. Pass <code>None</code> to lift the cap when the input size is already trusted.</td>
+</tr>
+</tbody>
+</table>
+<p>Detection runs <strong>per <code>ContentItem</code></strong>, not on the whole <code>view.render()</code>: a formula initiator is
+position-sensitive (it must be a cell's <em>first</em> character), so each item is treated as one cell
+candidate. A trigger at the start of any item is caught; a formula-looking substring <em>inside</em> an item
+(<code>note: =1+1</code>) is not, and an embedded newline (<code>text\n=1+1</code>) is interior, not a new cell.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">aegis</span><span class="w"> </span><span class="kn">import</span> <span class="n">Guard</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">aegis.validators.detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormulaInjectionDetector</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">guard</span> <span class="o">=</span> <span class="n">Guard</span><span class="p">(</span><span class="s2">"input"</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">FormulaInjectionDetector</span><span class="p">())</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">guard</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">"=cmd|'/C calc'!A0"</span><span class="p">)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">has_failures</span><span class="p">:</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">failures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">error_code</span><span class="p">)</span>  <span class="c1"># FORMULA_INJECTION_DETECTED</span>
+</code></pre></div>
+<h2 id="error-codes">Error Codes<a class="headerlink" href="#error-codes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Error Code</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FORMULA_INJECTION_DETECTED</code></td>
+<td>A content item's effective start is a formula initiator (after decoding, quote/padding skip).</td>
+</tr>
+<tr>
+<td><code>FORMULA_INJECTION_INPUT_TOO_LARGE</code></td>
+<td><code>max_input_chars</code> is set and the rendered view exceeds it.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="failure-details">Failure Details<a class="headerlink" href="#failure-details" title="Permanent link">&para;</a></h2>
+<p><code>FORMULA_INJECTION_DETECTED</code> reports the earliest offending item (the raw input and matched cell are
+never echoed):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>trigger_class</code></td>
+<td><code>str</code></td>
+<td>The trigger class: <code>ascii</code>, <code>fullwidth</code>, or <code>control</code>.</td>
+</tr>
+<tr>
+<td><code>trigger</code></td>
+<td><code>str</code></td>
+<td>The fixed trigger enum: <code>EQUALS</code>, <code>PLUS</code>, <code>MINUS</code>, <code>AT</code>, <code>FULLWIDTH_EQUALS</code>/<code>FULLWIDTH_PLUS</code>/<code>FULLWIDTH_MINUS</code>/<code>FULLWIDTH_AT</code>, or <code>TAB</code>/<code>CR</code>/<code>LF</code>.</td>
+</tr>
+<tr>
+<td><code>match_offset</code></td>
+<td><code>int</code></td>
+<td>Effective-start position, as a count of Unicode code points into the decoded item text (a trigger is a single code point, so no length is reported).</td>
+</tr>
+<tr>
+<td><code>padding_skipped</code></td>
+<td><code>int</code></td>
+<td>Number of leading padding code points skipped to reach the effective start.</td>
+</tr>
+<tr>
+<td><code>item_index</code></td>
+<td><code>int</code></td>
+<td>Index of the offending item in <code>view.items</code>.</td>
+</tr>
+<tr>
+<td><code>formula_shape</code></td>
+<td><code>str</code></td>
+<td>Names a recognized high-impact shape — <code>dde_pipe_bang</code>, <code>hyperlink</code>, or <code>dde</code> — to raise severity on; best-effort lexical match (can over-report a look-alike token). <code>unknown</code> means no recognized shape matched, <strong>not</strong> that the formula is safe (e.g. <code>=WEBSERVICE(...)</code> reports <code>unknown</code>). Never changes the verdict.</td>
+</tr>
+</tbody>
+</table>
+<p><code>FORMULA_INJECTION_INPUT_TOO_LARGE</code> carries:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>length</code></td>
+<td><code>int</code></td>
+<td>The rendered view length that exceeded the limit.</td>
+</tr>
+<tr>
+<td><code>limit</code></td>
+<td><code>int</code></td>
+<td>The configured <code>max_input_chars</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="aegis.validators.detection.FormulaInjectionDetector" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>              <code class="highlight language-python"><span class="n">aegis</span><span class="o">.</span><span class="n">validators</span><span class="o">.</span><span class="n">detection</span><span class="o">.</span><span class="n">FormulaInjectionDetector</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">ascii_triggers</span><span class="o">=</span><span class="s1">'=+-@'</span><span class="p">,</span> <span class="n">detect_fullwidth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">detect_control_prefix</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">skip_leading_padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">skip_leading_quote</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">detect_formula_shape</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">strip_invisible_chars</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">decode_obfuscation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_input_chars</span><span class="o">=</span><span class="n">_DEFAULT_MAX_INPUT_CHARS</span><span class="p">)</span></code>
+
+<a href="#aegis.validators.detection.FormulaInjectionDetector" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="            aegis.BaseValidator (aegis.validators.base.BaseValidator)" href="../../../api-reference/#aegis.BaseValidator">BaseValidator</a></code></p>
+
+
+
+        <p>Flags a content item whose effective start is a spreadsheet formula initiator.</p>
+<p>A detect-only validator for the <code>Guard</code> path. For each <code>ContentItem</code> (one cell candidate) it
+decodes obfuscation, skips one optional leading structural <code>"</code> and any leading padding, then
+reports a failure when the effective start is a formula initiator: ASCII <code>= + - @</code>, full-width
+<code>＝＋－＠</code>, or a control prefix (TAB/CR/LF). Any leading trigger flags — there is no numeric or
+function-name exception — except a leading <code>'</code>, the spreadsheet neutralizer, which passes. It
+never rewrites the content.</p>
+<p>This is <strong>defense-in-depth</strong>, not a primary control — the authoritative fix is neutralization at
+the CSV serializer. A passed result means "no leading formula initiator under this policy", not
+"safe in every spreadsheet". By default <code>-</code>/<code>+</code>/<code>@</code>-led prose (<code>-5</code>, bullets,
+<code>@mentions</code>) is flagged; narrow <code>ascii_triggers</code> or read the <code>formula_shape</code> detail to tier
+severity.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="aegis.validators.detection.FormulaInjectionDetector.detect_fullwidth">detect_fullwidth</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Flag the full-width initiators <code>＝＋－＠</code>.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="aegis.validators.detection.FormulaInjectionDetector.detect_control_prefix">detect_control_prefix</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Flag a leading TAB/CR/LF.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="aegis.validators.detection.FormulaInjectionDetector.skip_leading_padding">skip_leading_padding</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Skip leading padding to the effective start before matching.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="aegis.validators.detection.FormulaInjectionDetector.skip_leading_quote">skip_leading_quote</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Skip one leading structural <code>"</code> before matching.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="aegis.validators.detection.FormulaInjectionDetector.detect_formula_shape">detect_formula_shape</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Compute the <code>formula_shape</code> severity marker on a hit — names a
+recognized high-impact shape to raise severity on; <code>"unknown"</code> is not a safety signal, and
+the marker never changes the verdict.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="aegis.validators.detection.FormulaInjectionDetector.strip_invisible_chars">strip_invisible_chars</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Strip zero-width/control characters during preprocessing.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="aegis.validators.detection.FormulaInjectionDetector.decode_obfuscation">decode_obfuscation</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Decode URL/HTML/JS/CSS encoding layers during preprocessing.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>from aegis import Guard
+guard = Guard("input").use(FormulaInjectionDetector())
+result = await guard.validate("=cmd|'/C calc'!A0")
+result.failures[0].error_code
+'FORMULA_INJECTION_DETECTED'</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+        <p>Configure the trigger policy and how aggressively input is decoded before matching.</p>
+<p>The config is narrow by design: the dials narrow or widen the trigger classes and the
+decode/skip passes, but there is no arbitrary user regex or per-value exemption (either would
+reopen a bypass). The ASCII floor cannot be emptied.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>ascii_triggers</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The class-A initiators to flag, as a string of characters drawn from
+<code>=+-@</code>. Narrow it (e.g. <code>"="</code>) to cut the false-positive cost on prose that leads
+with <code>-</code>/<code>+</code>/<code>@</code>. Must be non-empty and contain only those four characters.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;=+-@&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>detect_fullwidth</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Flag the full-width initiators <code>＝＋－＠</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>detect_control_prefix</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Flag a leading TAB/CR/LF.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>skip_leading_padding</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Skip leading padding (spaces, NBSP, zero-width, …) to the effective
+start before matching, so a padded trigger (<code>"   =SUM(...)"</code>) is still caught.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>skip_leading_quote</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Skip one leading structural <code>"</code> before matching, so a CSV-quoted
+field like <code>"=1+1</code> is still caught (the surrounding quotes are CSV structure, not
+part of the cell content).</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>detect_formula_shape</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Compute the <code>formula_shape</code> severity marker (DDE / HYPERLINK) on
+a hit, recorded in <code>details</code> to raise severity on a recognized shape. A best-effort
+lexical match that can over-report a look-alike token; <code>"unknown"</code> means no recognized
+shape matched, not that the formula is safe. Never changes the verdict.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>strip_invisible_chars</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Strip zero-width/control characters before matching.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>decode_obfuscation</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Decode URL/HTML/JS/CSS encoding layers before matching.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>max_input_chars</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Resource valve. When the rendered view exceeds it, the input is rejected
+with <code>FORMULA_INJECTION_INPUT_TOO_LARGE</code> rather than preprocessed and scanned,
+bounding the per-request work (up to <code>MAX_DECODE_ITERATIONS</code> decode passes per item
+plus a per-character category scan). Defaults to 1 MiB of characters; pass <code>None</code> to
+lift the cap when the input size is already trusted.</p>
+              </div>
+            </td>
+            <td>
+                  <code><span title="aegis.validators.detection.formula_injection_detector._DEFAULT_MAX_INPUT_CHARS">_DEFAULT_MAX_INPUT_CHARS</span></code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>ascii_triggers</code> is empty or contains a character outside <code>=+-@</code>, or
+if <code>max_input_chars</code> is negative.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+                  <details class="mkdocstrings-source">
+                    <summary>Source code in <code>src/aegis/validators/detection/formula_injection_detector.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-295">295</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-296">296</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-297">297</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-298">298</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-299">299</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-300">300</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-301">301</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-302">302</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-303">303</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-304">304</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-305">305</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-306">306</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-307">307</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-308">308</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-309">309</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-310">310</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-311">311</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-312">312</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-313">313</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-314">314</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-315">315</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-316">316</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-317">317</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-318">318</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-319">319</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-320">320</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-321">321</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-322">322</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-323">323</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-324">324</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-325">325</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-326">326</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-327">327</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-328">328</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-329">329</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-330">330</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-331">331</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-332">332</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-333">333</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-334">334</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-335">335</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-336">336</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-337">337</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-338">338</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-339">339</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-340">340</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-341">341</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-342">342</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-343">343</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-344">344</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-345">345</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-346">346</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-347">347</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-348">348</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-349">349</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-350">350</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-351">351</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-352">352</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-353">353</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-354">354</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-355">355</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-356">356</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-357">357</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-358">358</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-295" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-295"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-296" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-296"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-297" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-297"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-298" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-298"></a>    <span class="n">ascii_triggers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"=+-@"</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-299" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-299"></a>    <span class="n">detect_fullwidth</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-300" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-300"></a>    <span class="n">detect_control_prefix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-301" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-301"></a>    <span class="n">skip_leading_padding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-302" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-302"></a>    <span class="n">skip_leading_quote</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-303" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-303"></a>    <span class="n">detect_formula_shape</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-304" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-304"></a>    <span class="n">strip_invisible_chars</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-305" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-305"></a>    <span class="n">decode_obfuscation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-306" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-306"></a>    <span class="n">max_input_chars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_DEFAULT_MAX_INPUT_CHARS</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-307" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-307"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-308" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-308"></a><span class="w">    </span><span class="sd">"""Configure the trigger policy and how aggressively input is decoded before matching.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-309" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-309"></a>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-310" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-310"></a><span class="sd">    The config is narrow by design: the dials narrow or widen the trigger classes and the</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-311" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-311"></a><span class="sd">    decode/skip passes, but there is no arbitrary user regex or per-value exemption (either would</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-312" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-312"></a><span class="sd">    reopen a bypass). The ASCII floor cannot be emptied.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-313" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-313"></a>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-314" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-314"></a><span class="sd">    Args:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-315" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-315"></a><span class="sd">        ascii_triggers: The class-A initiators to flag, as a string of characters drawn from</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-316" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-316"></a><span class="sd">            ``=+-@``. Narrow it (e.g. ``"="``) to cut the false-positive cost on prose that leads</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-317" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-317"></a><span class="sd">            with ``-``/``+``/``@``. Must be non-empty and contain only those four characters.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-318" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-318"></a><span class="sd">        detect_fullwidth: Flag the full-width initiators ``＝＋－＠``.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-319" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-319"></a><span class="sd">        detect_control_prefix: Flag a leading TAB/CR/LF.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-320" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-320"></a><span class="sd">        skip_leading_padding: Skip leading padding (spaces, NBSP, zero-width, …) to the effective</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-321" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-321"></a><span class="sd">            start before matching, so a padded trigger (``"   =SUM(...)"``) is still caught.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-322" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-322"></a><span class="sd">        skip_leading_quote: Skip one leading structural ``"`` before matching, so a CSV-quoted</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-323" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-323"></a><span class="sd">            field like ``"=1+1`` is still caught (the surrounding quotes are CSV structure, not</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-324" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-324"></a><span class="sd">            part of the cell content).</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-325" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-325"></a><span class="sd">        detect_formula_shape: Compute the ``formula_shape`` severity marker (DDE / HYPERLINK) on</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-326" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-326"></a><span class="sd">            a hit, recorded in ``details`` to raise severity on a recognized shape. A best-effort</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-327" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-327"></a><span class="sd">            lexical match that can over-report a look-alike token; ``"unknown"`` means no recognized</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-328" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-328"></a><span class="sd">            shape matched, not that the formula is safe. Never changes the verdict.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-329" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-329"></a><span class="sd">        strip_invisible_chars: Strip zero-width/control characters before matching.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-330" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-330"></a><span class="sd">        decode_obfuscation: Decode URL/HTML/JS/CSS encoding layers before matching.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-331" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-331"></a><span class="sd">        max_input_chars: Resource valve. When the rendered view exceeds it, the input is rejected</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-332" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-332"></a><span class="sd">            with ``FORMULA_INJECTION_INPUT_TOO_LARGE`` rather than preprocessed and scanned,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-333" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-333"></a><span class="sd">            bounding the per-request work (up to ``MAX_DECODE_ITERATIONS`` decode passes per item</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-334" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-334"></a><span class="sd">            plus a per-character category scan). Defaults to 1 MiB of characters; pass ``None`` to</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-335" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-335"></a><span class="sd">            lift the cap when the input size is already trusted.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-336" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-336"></a>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-337" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-337"></a><span class="sd">    Raises:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-338" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-338"></a><span class="sd">        ValueError: If ``ascii_triggers`` is empty or contains a character outside ``=+-@``, or</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-339" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-339"></a><span class="sd">            if ``max_input_chars`` is negative.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-340" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-340"></a><span class="sd">    """</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-341" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-341"></a>    <span class="c1"># Fail-closed: validate every argument before setting any attribute, so a misconfigured</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-342" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-342"></a>    <span class="c1"># detector raises at construction rather than silently under-enforcing at validate time.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-343" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-343"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">ascii_triggers</span><span class="p">:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-344" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-344"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"ascii_triggers must not be empty; the ASCII safety floor cannot be disabled."</span><span class="p">)</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-345" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-345"></a>    <span class="n">invalid</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ascii_triggers</span><span class="p">)</span> <span class="o">-</span> <span class="n">_ASCII_TRIGGERS</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-346" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-346"></a>    <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-347" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-347"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ascii_triggers may only contain =, +, -, @; got invalid </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">invalid</span><span class="p">)</span><span class="si">!r}</span><span class="s2">."</span><span class="p">)</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-348" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-348"></a>    <span class="k">if</span> <span class="n">max_input_chars</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_input_chars</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-349" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-349"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max_input_chars must be non-negative, got </span><span class="si">{</span><span class="n">max_input_chars</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-350" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-350"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_ascii_triggers</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">ascii_triggers</span><span class="p">)</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-351" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-351"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">detect_fullwidth</span> <span class="o">=</span> <span class="n">detect_fullwidth</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-352" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-352"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">detect_control_prefix</span> <span class="o">=</span> <span class="n">detect_control_prefix</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-353" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-353"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">skip_leading_padding</span> <span class="o">=</span> <span class="n">skip_leading_padding</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-354" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-354"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">skip_leading_quote</span> <span class="o">=</span> <span class="n">skip_leading_quote</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-355" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-355"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">detect_formula_shape</span> <span class="o">=</span> <span class="n">detect_formula_shape</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-356" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-356"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">strip_invisible_chars</span> <span class="o">=</span> <span class="n">strip_invisible_chars</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-357" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-357"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">decode_obfuscation</span> <span class="o">=</span> <span class="n">decode_obfuscation</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-358" name="aegis.validators.detection.FormulaInjectionDetector--source--__codelineno-0-358"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span> <span class="o">=</span> <span class="n">max_input_chars</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="aegis.validators.detection.FormulaInjectionDetector.validate" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#aegis.validators.detection.FormulaInjectionDetector.validate" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Report whether any content item begins with a spreadsheet formula initiator.</p>
+<p>Inspects each <code>ContentItem</code> in <code>view.items</code> as one cell candidate (see the module
+docstring for why this is per-item, not over the flattened <code>view.render()</code>). The resource
+valve measures the rendered length first (the item lengths plus the newline joiners
+<code>render()</code> would add), before any decoding, so oversized input is rejected without doing the
+per-item decode/scan work — and without materializing the joined string, which the per-item
+scan never needs.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>view</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="              aegis.ContentView(items)
+
+  
+      dataclass
+   (aegis.validators.base.ContentView)" href="../../../api-reference/#aegis.ContentView">ContentView</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The content under inspection. Never <code>None</code>, but may be empty.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>metadata</code>
+            </td>
+            <td>
+                  <code><span title="aegis.metadata.GuardMetadata">GuardMetadata</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Surrounding agent context. Optional and unused here.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>PassedResult</code> when no item's effective start is an enabled trigger. Otherwise a</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>FailedResult</code> carrying <code>FORMULA_INJECTION_DETECTED</code> for the earliest offending item</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>(lowest <code>item_index</code>), with <code>details</code> holding <code>trigger_class</code></p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>(<code>ascii</code>/<code>fullwidth</code>/<code>control</code>), <code>trigger</code> (the fixed enum, e.g. <code>EQUALS</code>),</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>match_offset</code> (the effective-start position in code points into the decoded item text),</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>padding_skipped</code> (count), <code>item_index</code>, and <code>formula_shape</code></p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>(<code>dde</code>/<code>hyperlink</code>/<code>dde_pipe_bang</code>/<code>unknown</code>). Or <code>FORMULA_INJECTION_INPUT_TOO_LARGE</code></p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>when <code>max_input_chars</code> is set and the rendered view exceeds it. The raw input, the</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>matched cell, and any formula text are never echoed — only the fixed enums, offset, and</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>counts are reported.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/aegis/validators/detection/formula_injection_detector.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-360">360</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-361">361</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-362">362</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-363">363</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-364">364</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-365">365</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-366">366</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-367">367</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-368">368</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-369">369</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-370">370</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-371">371</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-372">372</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-373">373</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-374">374</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-375">375</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-376">376</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-377">377</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-378">378</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-379">379</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-380">380</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-381">381</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-382">382</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-383">383</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-384">384</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-385">385</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-386">386</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-387">387</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-388">388</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-389">389</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-390">390</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-391">391</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-392">392</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-393">393</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-394">394</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-395">395</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-396">396</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-397">397</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-398">398</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-399">399</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-400">400</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-401">401</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-402">402</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-403">403</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-404">404</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-405">405</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-406">406</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-407">407</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-408">408</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-409">409</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-410">410</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-411">411</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-412">412</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-413">413</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-414">414</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-415">415</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-416">416</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-417">417</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-418">418</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-419">419</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-420">420</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-421">421</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-422">422</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-423">423</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-424">424</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-425">425</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-426">426</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-427">427</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-428">428</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-429">429</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-430">430</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-431">431</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-432">432</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-433">433</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-434">434</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-435">435</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-436">436</a></span>
+<span class="normal"><a href="#aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-437">437</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-360" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-360"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-361" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-361"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-362" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-362"></a>    <span class="n">view</span><span class="p">:</span> <span class="n">ContentView</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-363" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-363"></a>    <span class="n">metadata</span><span class="p">:</span> <span class="n">GuardMetadata</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-364" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-364"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationResult</span><span class="p">:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-365" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-365"></a><span class="w">    </span><span class="sd">"""Report whether any content item begins with a spreadsheet formula initiator.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-366" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-366"></a>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-367" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-367"></a><span class="sd">    Inspects each ``ContentItem`` in ``view.items`` as one cell candidate (see the module</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-368" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-368"></a><span class="sd">    docstring for why this is per-item, not over the flattened ``view.render()``). The resource</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-369" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-369"></a><span class="sd">    valve measures the rendered length first (the item lengths plus the newline joiners</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-370" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-370"></a><span class="sd">    ``render()`` would add), before any decoding, so oversized input is rejected without doing the</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-371" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-371"></a><span class="sd">    per-item decode/scan work — and without materializing the joined string, which the per-item</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-372" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-372"></a><span class="sd">    scan never needs.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-373" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-373"></a>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-374" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-374"></a><span class="sd">    Args:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-375" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-375"></a><span class="sd">        view: The content under inspection. Never ``None``, but may be empty.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-376" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-376"></a><span class="sd">        metadata: Surrounding agent context. Optional and unused here.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-377" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-377"></a>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-378" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-378"></a><span class="sd">    Returns:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-379" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-379"></a><span class="sd">        ``PassedResult`` when no item's effective start is an enabled trigger. Otherwise a</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-380" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-380"></a><span class="sd">        ``FailedResult`` carrying ``FORMULA_INJECTION_DETECTED`` for the earliest offending item</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-381" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-381"></a><span class="sd">        (lowest ``item_index``), with ``details`` holding ``trigger_class``</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-382" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-382"></a><span class="sd">        (``ascii``/``fullwidth``/``control``), ``trigger`` (the fixed enum, e.g. ``EQUALS``),</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-383" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-383"></a><span class="sd">        ``match_offset`` (the effective-start position in code points into the decoded item text),</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-384" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-384"></a><span class="sd">        ``padding_skipped`` (count), ``item_index``, and ``formula_shape``</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-385" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-385"></a><span class="sd">        (``dde``/``hyperlink``/``dde_pipe_bang``/``unknown``). Or ``FORMULA_INJECTION_INPUT_TOO_LARGE``</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-386" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-386"></a><span class="sd">        when ``max_input_chars`` is set and the rendered view exceeds it. The raw input, the</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-387" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-387"></a><span class="sd">        matched cell, and any formula text are never echoed — only the fixed enums, offset, and</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-388" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-388"></a><span class="sd">        counts are reported.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-389" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-389"></a><span class="sd">    """</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-390" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-390"></a>    <span class="c1"># Resource valve. render() joins items with "\n", so the rendered length is the sum of the</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-391" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-391"></a>    <span class="c1"># item lengths plus one "\n" per gap — we compute that directly instead of materializing the</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-392" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-392"></a>    <span class="c1"># whole joined string, which this validator never needs (it scans each item's own value,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-393" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-393"></a>    <span class="c1"># below). When the cap is lifted (None) we skip the measurement entirely.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-394" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-394"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-395" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-395"></a>        <span class="n">rendered_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">view</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-396" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-396"></a>        <span class="k">if</span> <span class="n">view</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-397" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-397"></a>            <span class="n">rendered_length</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">items</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># the "\n" joiners render() would insert</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-398" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-398"></a>        <span class="k">if</span> <span class="n">rendered_length</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span><span class="p">:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-399" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-399"></a>            <span class="k">return</span> <span class="n">FailedResult</span><span class="p">(</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-400" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-400"></a>                <span class="n">error_message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Text exceeds the </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span><span class="si">}</span><span class="s2">-character inspection limit."</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-401" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-401"></a>                <span class="n">error_code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">FORMULA_INJECTION_INPUT_TOO_LARGE</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-402" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-402"></a>                <span class="n">details</span><span class="o">=</span><span class="p">{</span><span class="s2">"length"</span><span class="p">:</span> <span class="n">rendered_length</span><span class="p">,</span> <span class="s2">"limit"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span><span class="p">},</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-403" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-403"></a>            <span class="p">)</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-404" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-404"></a>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-405" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-405"></a>    <span class="c1"># The earliest offending item wins: items are scanned in order and the first hit is returned,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-406" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-406"></a>    <span class="c1"># so the reported item_index is the lowest offending one. Each item is a single cell candidate</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-407" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-407"></a>    <span class="c1"># with one effective start, so exactly one trigger is ever reported — the output stays minimal</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-408" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-408"></a>    <span class="c1"># and never maps out the whole payload.</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-409" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-409"></a>    <span class="k">for</span> <span class="n">item_index</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">items</span><span class="p">):</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-410" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-410"></a>        <span class="n">hit</span> <span class="o">=</span> <span class="n">_scan_item</span><span class="p">(</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-411" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-411"></a>            <span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-412" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-412"></a>            <span class="n">ascii_triggers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ascii_triggers</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-413" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-413"></a>            <span class="n">detect_fullwidth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">detect_fullwidth</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-414" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-414"></a>            <span class="n">detect_control_prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">detect_control_prefix</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-415" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-415"></a>            <span class="n">skip_leading_padding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_leading_padding</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-416" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-416"></a>            <span class="n">skip_leading_quote</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_leading_quote</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-417" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-417"></a>            <span class="n">detect_formula_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">detect_formula_shape</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-418" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-418"></a>            <span class="n">strip_invisible</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">strip_invisible_chars</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-419" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-419"></a>            <span class="n">decode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">decode_obfuscation</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-420" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-420"></a>        <span class="p">)</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-421" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-421"></a>        <span class="k">if</span> <span class="n">hit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-422" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-422"></a>            <span class="k">return</span> <span class="n">FailedResult</span><span class="p">(</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-423" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-423"></a>                <span class="n">error_message</span><span class="o">=</span><span class="p">(</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-424" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-424"></a>                    <span class="sa">f</span><span class="s2">"A content item's effective start is a formula initiator (</span><span class="si">{</span><span class="n">hit</span><span class="o">.</span><span class="n">trigger_class</span><span class="si">}</span><span class="s2">) "</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-425" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-425"></a>                    <span class="sa">f</span><span class="s2">"at offset </span><span class="si">{</span><span class="n">hit</span><span class="o">.</span><span class="n">match_offset</span><span class="si">}</span><span class="s2">."</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-426" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-426"></a>                <span class="p">),</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-427" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-427"></a>                <span class="n">error_code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">FORMULA_INJECTION_DETECTED</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-428" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-428"></a>                <span class="n">details</span><span class="o">=</span><span class="p">{</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-429" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-429"></a>                    <span class="s2">"trigger_class"</span><span class="p">:</span> <span class="n">hit</span><span class="o">.</span><span class="n">trigger_class</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-430" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-430"></a>                    <span class="s2">"trigger"</span><span class="p">:</span> <span class="n">hit</span><span class="o">.</span><span class="n">trigger</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-431" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-431"></a>                    <span class="s2">"match_offset"</span><span class="p">:</span> <span class="n">hit</span><span class="o">.</span><span class="n">match_offset</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-432" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-432"></a>                    <span class="s2">"padding_skipped"</span><span class="p">:</span> <span class="n">hit</span><span class="o">.</span><span class="n">padding_skipped</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-433" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-433"></a>                    <span class="s2">"item_index"</span><span class="p">:</span> <span class="n">item_index</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-434" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-434"></a>                    <span class="s2">"formula_shape"</span><span class="p">:</span> <span class="n">hit</span><span class="o">.</span><span class="n">formula_shape</span><span class="p">,</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-435" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-435"></a>                <span class="p">},</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-436" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-436"></a>            <span class="p">)</span>
+<a id="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-437" name="aegis.validators.detection.FormulaInjectionDetector.validate--source--__codelineno-0-437"></a>    <span class="k">return</span> <span class="n">PassedResult</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "content.code.annotate", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.expand", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

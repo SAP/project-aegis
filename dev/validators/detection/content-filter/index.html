@@ -1,0 +1,2859 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Open-core guardrail library for A2A agent executors">
+      
+      
+      
+      
+        <link rel="prev" href="../size-validator/">
+      
+      
+        <link rel="next" href="../formula-injection-detector/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Content Filter - Project Aegis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#contentfilter" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Project Aegis" class="md-header__button md-logo" aria-label="Project Aegis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Project Aegis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Content Filter
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SAP/project-aegis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SAP/project-aegis
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Documentation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cookbook/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Cookbook
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Validators
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../changelog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Project Aegis" class="md-nav__button md-logo" aria-label="Project Aegis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3"/></svg>
+
+    </a>
+    Project Aegis
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SAP/project-aegis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SAP/project-aegis
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Documentation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../a2a-wrapper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A2A Wrapper
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../mutation-guard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MutationGuard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cookbook
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cookbook
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/agent-executor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AgentExecutor Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/agent-stream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    agent.stream() Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/standalone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standalone Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validators
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Validators
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../custom-validators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Validators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../authoring-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Detection
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../length-validator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Length Validator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompt-leakage-check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompt Leakage Check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../size-validator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Size Validator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Content Filter
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Content Filter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructor-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#failure-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failure Details
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aegis.validators.detection.ContentFilter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ContentFilter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ContentFilter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aegis.validators.detection.ContentFilter.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../formula-injection-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formula Injection Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sql-injection-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Injection Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xss-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XSS Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xxe-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XXE Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mutation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mutation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mutation/html-sanitizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTML Sanitizer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructor-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#failure-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failure Details
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aegis.validators.detection.ContentFilter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ContentFilter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ContentFilter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aegis.validators.detection.ContentFilter.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="contentfilter">ContentFilter<a class="headerlink" href="#contentfilter" title="Permanent link">&para;</a></h1>
+<p>Reject text that contains any of a configured list of blocked terms or phrases.</p>
+<h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
+<p><code>ContentFilter</code> is a deterministic, text-only, <strong>detect-only</strong> validator. It runs under
+<a href="../../../guard/"><code>Guard</code></a> as a policy guardrail on agent <strong>input</strong> or <strong>output</strong>, scanning the text
+for a caller-configured list of literal terms and rejecting it when any term appears. Reach for it
+when you have a <strong>known list of words or phrases</strong> to keep out — a competitor list, banned subjects,
+jailbreak markers, or internal code-names.</p>
+<p>Matching is <strong>literal, never semantic</strong>. Each term is matched as escaped literal text, so the
+validator finds the exact terms you configure — not a paraphrase, a synonym, a translation, or text
+that is merely <em>about</em> the subject. Deciding whether text is <em>about</em> a topic without using the words
+needs a model-backed classifier, which is a separate validator.</p>
+<p>By default a term matches only as a discrete word or phrase, on word boundaries. This avoids the
+<strong>Scunthorpe problem</strong> — the classic false positive where a clean word is blocked because a banned
+string appears inside it. Blocking <code>politics</code> does not reject <code>apolitical</code>; blocking <code>cat</code> does not
+reject <code>category</code>. The trade-off is that a term embedded inside a longer run of characters is not
+matched. The boundaries are Python <code>re</code> word-character (<code>\w</code>) boundaries, an approximation of
+Unicode UAX #29 — reliable for space-delimited scripts. A language that does not delimit words with
+spaces (Chinese, Thai) needs <code>word_boundary=False</code>, which matches anywhere in the text.</p>
+<p>Normalization is <strong>off by default</strong> (opt in with <code>normalize=True</code>): matching is fully literal
+unless you enable it, which mirrors the engine's off-by-default <code>Guard(normalize=...)</code> and keeps
+matching predictable. When enabled, it folds cheap cosmetic evasions — case changes, added
+whitespace, zero-width/invisible characters, and NFKC-compatibility variants such as full-width
+letters (<code>ｇａｍｂｌｉｎｇ</code> → <code>gambling</code>) — by normalizing both the text and every term before matching.
+These folds are script-safe: they never map homoglyphs (an engine-only concern), so genuine
+non-Latin letters are not rewritten to ASCII.</p>
+<p>It is not a general safety net, and by design it does <strong>not</strong> catch:</p>
+<ul>
+<li>text that is <em>about</em> a blocked subject but never uses a configured term (semantic disclosure);</li>
+<li>confusable look-alike substitution (Cyrillic <code>о</code> for ASCII <code>o</code>), leetspeak (<code>p0litics</code>), or
+  Base64/hex-encoded terms (documented residual gaps, addressed by future additive hardening);</li>
+<li>a term split across separately validated messages or chunks.</li>
+</ul>
+<p>Each of those belongs to a different single-concern validator. A PASS certifies only that none of
+the configured terms appeared — <strong>never</strong> that the text is on-topic, safe, or lawful. Per OWASP, a
+denylist is not a general security boundary.</p>
+<p>On a hit the <code>FailedResult</code> carries only safe summary metadata (an opaque term index, a match count,
+and an offset); it <strong>never</strong> echoes the surrounding input. The literal blocked term is included only
+when <code>report_matched_topic=True</code>, which is off by default in case a term is a confidential
+code-name. If you enable it, or log the failure <code>details</code>, keep confidential values out of
+<code>blocked_topics</code>.</p>
+<h2 id="constructor-parameters">Constructor Parameters<a class="headerlink" href="#constructor-parameters" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>blocked_topics</code></td>
+<td><code>list[str]</code></td>
+<td><em>(required)</em></td>
+<td>The literal terms/phrases to keep out of the text. At least one is required; each is matched as literal text, never as a regex or a semantic subject.</td>
+</tr>
+<tr>
+<td><code>word_boundary</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>When <code>True</code>, match only discrete words/phrases on word boundaries (avoids the Scunthorpe false positive). Set <code>False</code> for substring matching — required for Chinese/Thai and other scripts without word delimiters.</td>
+</tr>
+<tr>
+<td><code>case_sensitive</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>When <code>True</code>, skip case-folding. Only takes effect when <code>normalize=True</code> (case-folding is one step of normalization).</td>
+</tr>
+<tr>
+<td><code>normalize</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>Opt in to normalize both the text and every term before matching — Unicode normalization, strip zero-width/format characters, collapse whitespace, and case-fold (unless <code>case_sensitive</code>). Off by default: matching is fully literal unless enabled.</td>
+</tr>
+<tr>
+<td><code>compatibility_folding</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>Only when <code>normalize=True</code>. <code>True</code> uses NFKC, folding full-width and other compatibility variants (catches a real evasion). <code>False</code> uses canonical NFC, avoiding NFKC over-folding but no longer catching full-width forms.</td>
+</tr>
+<tr>
+<td><code>report_matched_topic</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>When <code>True</code>, include the literal <code>matched_topic</code> in the failure <code>details</code>. Off by default because a configured term could be confidential; the surrounding input is never echoed either way.</td>
+</tr>
+<tr>
+<td><code>max_input_chars</code></td>
+<td><code>int \| None</code></td>
+<td><code>None</code></td>
+<td>Optional resource valve. When set and the rendered text exceeds it, reject with <code>CONTENT_FILTER_INPUT_TOO_LARGE</code> rather than scan. A hard input-size limit belongs to a dedicated length/size validator; this is only a safety valve.</td>
+</tr>
+</tbody>
+</table>
+<p>Construction raises <code>ValueError</code> when <code>blocked_topics</code> is a single string instead of a list (a bare
+string would expand into one-character terms), when <code>blocked_topics</code> is empty, when any term is
+empty/whitespace-only or empty after normalization (an empty needle matches everything), or when
+<code>max_input_chars</code> is negative.</p>
+<p>The defaults suit space-delimited scripts and literal matching. Enable <code>normalize=True</code> for
+cosmetic-evasion resistance, and calibrate <code>word_boundary</code> and <code>compatibility_folding</code> against your
+target languages and your own benign and adversarial text before production.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<p>The minimal setup blocks a list of words with the safe defaults — word-boundary matching,
+normalization off (fully literal), nothing echoed:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">aegis</span><span class="w"> </span><span class="kn">import</span> <span class="n">Guard</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">aegis.validators.detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContentFilter</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">guard</span> <span class="o">=</span> <span class="n">Guard</span><span class="p">(</span><span class="s2">"input"</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">ContentFilter</span><span class="p">(</span><span class="n">blocked_topics</span><span class="o">=</span><span class="p">[</span><span class="s2">"gambling"</span><span class="p">,</span> <span class="s2">"credit card"</span><span class="p">]))</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">guard</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">"Come learn about gambling strategies!"</span><span class="p">)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">has_failures</span><span class="p">:</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">failures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">error_code</span><span class="p">)</span>  <span class="c1"># CONTENT_BLOCKED</span>
+</code></pre></div>
+<p>For a Chinese/Thai term, or a deliberate substring policy, opt into substring matching:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">guard</span> <span class="o">=</span> <span class="n">Guard</span><span class="p">(</span><span class="s2">"input"</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">ContentFilter</span><span class="p">(</span><span class="n">blocked_topics</span><span class="o">=</span><span class="p">[</span><span class="s2">"赌博"</span><span class="p">],</span> <span class="n">word_boundary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">guard</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">"这里有很多赌博相关的内容。"</span><span class="p">)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">has_failures</span><span class="p">:</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">failures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">error_code</span><span class="p">)</span>  <span class="c1"># CONTENT_BLOCKED</span>
+</code></pre></div>
+<p>When more than one term matches, the single reported verdict follows a fixed precedence:
+<code>CONTENT_FILTER_INPUT_TOO_LARGE</code> → <code>CONTENT_BLOCKED</code>. Within <code>CONTENT_BLOCKED</code>, the earliest matching
+offset wins (ties broken by the term's index in <code>blocked_topics</code>), and <code>match_count</code> reports how
+many distinct terms matched.</p>
+<h2 id="error-codes">Error Codes<a class="headerlink" href="#error-codes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Error Code</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONTENT_BLOCKED</code></td>
+<td>A configured term appears in the text (as a word-boundary match by default, or anywhere in substring mode).</td>
+</tr>
+<tr>
+<td><code>CONTENT_FILTER_INPUT_TOO_LARGE</code></td>
+<td><code>max_input_chars</code> is set and the rendered text exceeds it.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="failure-details">Failure Details<a class="headerlink" href="#failure-details" title="Permanent link">&para;</a></h2>
+<p>Fields populated on <code>FailedResult.details</code>. They are safe summaries only — never the surrounding
+input. <code>match_offset</code> indexes the normalized text and is diagnostic only, since the text is never
+echoed.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>matched_index</code></td>
+<td><code>int</code></td>
+<td>Opaque index of the matched term within <code>blocked_topics</code>. Reveals nothing about the content.</td>
+</tr>
+<tr>
+<td><code>match_count</code></td>
+<td><code>int</code></td>
+<td>How many distinct configured terms matched at least once.</td>
+</tr>
+<tr>
+<td><code>match_offset</code></td>
+<td><code>int</code></td>
+<td>Character offset of the reported match in the normalized text.</td>
+</tr>
+<tr>
+<td><code>word_boundary</code></td>
+<td><code>bool</code></td>
+<td>Whether word-boundary matching was in effect.</td>
+</tr>
+<tr>
+<td><code>matched_topic</code></td>
+<td><code>str</code></td>
+<td>The literal blocked term — present <strong>only</strong> when <code>report_matched_topic=True</code>.</td>
+</tr>
+<tr>
+<td><code>length</code></td>
+<td><code>int</code></td>
+<td>Length of the rejected text (only on <code>CONTENT_FILTER_INPUT_TOO_LARGE</code>).</td>
+</tr>
+<tr>
+<td><code>limit</code></td>
+<td><code>int</code></td>
+<td>The configured <code>max_input_chars</code> (only on <code>CONTENT_FILTER_INPUT_TOO_LARGE</code>).</td>
+</tr>
+</tbody>
+</table>
+<p>On a PASS, <code>details</code> carries <code>terms_checked</code> (count of configured terms compared) and
+<code>word_boundary</code>.</p>
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="aegis.validators.detection.ContentFilter" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>              <code class="highlight language-python"><span class="n">aegis</span><span class="o">.</span><span class="n">validators</span><span class="o">.</span><span class="n">detection</span><span class="o">.</span><span class="n">ContentFilter</span><span class="p">(</span><span class="n">blocked_topics</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">word_boundary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">compatibility_folding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">report_matched_topic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_input_chars</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#aegis.validators.detection.ContentFilter" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="            aegis.BaseValidator (aegis.validators.base.BaseValidator)" href="../../../api-reference/#aegis.BaseValidator">BaseValidator</a></code></p>
+
+
+
+        <p>Rejects text that contains any of a configured list of blocked terms or phrases.</p>
+<p>A deterministic, text-only, <strong>detect-only</strong> validator. It runs under <code>Guard</code> and scans a piece
+of text for a caller-configured list of literal terms/phrases, rejecting the text when any term
+appears as a normalized, word-boundary match (substring matching is opt-in via
+<code>word_boundary=False</code>). Reach for it as a policy guardrail on agent input or output when you
+have a <strong>known list of words/phrases</strong> to keep out — a competitor list, banned subjects,
+jailbreak markers, internal code-names.</p>
+<p>Matching is literal, never semantic. Each term is matched as escaped literal text — so <code>C++</code>
+and <code>a.b</code> match literally, never as a regex — and the validator finds only the exact terms you
+give it, not a paraphrase, synonym, or translation, and not text that is merely <em>about</em> the
+subject. Judging whether text is <em>about</em> a topic is the job of a separate, model-backed classifier.</p>
+<p>By default a term matches only as a discrete word or phrase, on word boundaries. This avoids the
+Scunthorpe false positive — blocking <code>politics</code> does not reject <code>apolitical</code> — at the cost of
+missing a term embedded without delimiters. The boundaries are Python <code>re</code> word-character
+(<code>\w</code>) boundaries, an approximation of Unicode UAX #29, so a language such as Chinese or Thai
+that does not delimit words with spaces needs <code>word_boundary=False</code>.</p>
+<p>Normalization (off by default; opt in with <code>normalize=True</code>) folds cheap cosmetic evasions —
+case changes, added whitespace, zero-width/invisible characters, and NFKC-compatibility variants
+such as full-width letters — by
+normalizing both the text and every term before matching. It does <strong>not</strong> fold confusable
+look-alikes, decode Base64/hex, or reverse leetspeak; those are documented residual gaps handled
+by future, additive hardening (see the ADR).</p>
+<p>Out of scope by design (each is a separate single-concern validator): semantic topic
+classification, deliberate-obfuscation detection (homoglyphs, leetspeak), encoding/decoding,
+toxicity/profanity scoring, PII/secret detection, and redacting the term instead of rejecting.</p>
+<p>On a hit it returns a <code>FailedResult</code> whose <code>error_message</code> and <code>details</code> carry only safe
+metadata — an opaque term index, a match count, and an offset — and <strong>never</strong> the surrounding
+input. The literal term is included only when <code>report_matched_topic=True</code> (off by default, in
+case a term is confidential).</p>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>from aegis import Guard
+guard = Guard("input").use(ContentFilter(blocked_topics=["gambling"]))
+result = await guard.validate("Come learn about gambling strategies!")
+result.failures[0].error_code
+'CONTENT_BLOCKED'</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+        <p>Configure the blocked terms and matching behavior.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>blocked_topics</code>
+            </td>
+            <td>
+                  <code><span title="list">list</span>[<span title="str">str</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The literal terms/phrases to keep out of the text. At least one is
+required, and none may be empty or whitespace-only. Each is matched as literal text
+(regex metacharacters are escaped), never as a pattern or a semantic subject.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>word_boundary</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>When <code>True</code> (default), a term matches only as a discrete word/phrase on
+word boundaries, avoiding the Scunthorpe false positive (<code>politics</code> does not match
+<code>apolitical</code>). Set <code>False</code> for substring matching — required for languages that
+do not delimit words with spaces (Chinese, Thai), where word boundaries are
+unreliable, or for a deliberate substring policy.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>case_sensitive</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>When <code>True</code>, skip case-folding during normalization. Only takes effect
+when <code>normalize=True</code> — case-folding is one step of normalization, so with
+<code>normalize=False</code> matching is fully literal regardless of this flag.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>normalize</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>When <code>True</code>, normalize both the text and every term before matching —
+Unicode normalization, strip zero-width/format characters, collapse whitespace, and
+case-fold (unless <code>case_sensitive</code>). Defeats cheap cosmetic evasions at the cost
+of some strictness. Defaults to <code>False</code> (matching is fully literal): opt in
+deliberately, mirroring the engine's off-by-default <code>Guard(normalize=...)</code> so
+normalization is never applied silently. The folds here are script-safe — they
+never map homoglyphs (that stays an engine-only concern, <code>Guard(normalize=True)</code>),
+so genuine non-Latin letters are not rewritten to ASCII.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>compatibility_folding</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Only takes effect when <code>normalize=True</code>. When <code>True</code> (default),
+use NFKC, which folds full-width and other compatibility variants (<code>ｇａｍｂｌｉｎｇ</code> →
+<code>gambling</code>) — a real, documented evasion. When <code>False</code>, use canonical NFC instead,
+which avoids the UAX #15 over-folding risk but no longer catches full-width forms.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>report_matched_topic</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>When <code>True</code>, include the literal <code>matched_topic</code> in the failure
+<code>details</code> (restores the 0.1.0 proof-of-concept field). Off by default because a
+configured term could be a confidential code-name; the surrounding input is never
+echoed either way.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>max_input_chars</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional resource valve. When set and the rendered text exceeds it, the
+text is rejected with <code>CONTENT_FILTER_INPUT_TOO_LARGE</code> rather than scanned. Off by
+default — a hard input-size limit belongs to a dedicated length/size validator; this
+is only a safety valve.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>blocked_topics</code> is a single string rather than a list (a bare string
+would expand into one-character terms); if <code>blocked_topics</code> is empty; if any term
+is empty or whitespace-only (an empty needle matches every input and would block
+everything); if any term is empty after normalization; or if <code>max_input_chars</code> is
+negative (a negative limit exceeds even empty text, so it would reject everything).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+                  <details class="mkdocstrings-source">
+                    <summary>Source code in <code>src/aegis/validators/detection/content_filter.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-123">123</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-124">124</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-125">125</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-126">126</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-127">127</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-128">128</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-129">129</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-130">130</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-131">131</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-132">132</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-133">133</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-134">134</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-135">135</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-136">136</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-137">137</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-138">138</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-139">139</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-140">140</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-141">141</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-142">142</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-143">143</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-144">144</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-145">145</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-146">146</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-147">147</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-148">148</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-149">149</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-150">150</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-151">151</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-152">152</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-153">153</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-154">154</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-155">155</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-156">156</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-157">157</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-158">158</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-159">159</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-160">160</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-161">161</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-162">162</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-163">163</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-164">164</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-165">165</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-166">166</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-167">167</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-168">168</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-169">169</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-170">170</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-171">171</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-172">172</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-173">173</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-174">174</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-175">175</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-176">176</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-177">177</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-178">178</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-179">179</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-180">180</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-181">181</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-182">182</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-183">183</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-184">184</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-185">185</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-186">186</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-187">187</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-188">188</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-189">189</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-190">190</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-191">191</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-192">192</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-193">193</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-194">194</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-195">195</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-196">196</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-197">197</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-198">198</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-199">199</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-200">200</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-201">201</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-202">202</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-203">203</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-204">204</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-205">205</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-206">206</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-207">207</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-208">208</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-209">209</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-210">210</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-211">211</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-212">212</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-213">213</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-214">214</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-215">215</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-216">216</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-217">217</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-218">218</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-219">219</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-220">220</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-221">221</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-222">222</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-223">223</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-224">224</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-225">225</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-226">226</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-227">227</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-228">228</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-229">229</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-230">230</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-231">231</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-232">232</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-233">233</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-234">234</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-235">235</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-236">236</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter--source--__codelineno-0-237">237</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-123" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-123"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-124" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-124"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-125" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-125"></a>    <span class="n">blocked_topics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-126" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-126"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-127" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-127"></a>    <span class="n">word_boundary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-128" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-128"></a>    <span class="n">case_sensitive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-129" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-129"></a>    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-130" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-130"></a>    <span class="n">compatibility_folding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-131" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-131"></a>    <span class="n">report_matched_topic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-132" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-132"></a>    <span class="n">max_input_chars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-133" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-133"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-134" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-134"></a><span class="w">    </span><span class="sd">"""Configure the blocked terms and matching behavior.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-135" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-135"></a>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-136" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-136"></a><span class="sd">    Args:</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-137" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-137"></a><span class="sd">        blocked_topics: The literal terms/phrases to keep out of the text. At least one is</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-138" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-138"></a><span class="sd">            required, and none may be empty or whitespace-only. Each is matched as literal text</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-139" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-139"></a><span class="sd">            (regex metacharacters are escaped), never as a pattern or a semantic subject.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-140" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-140"></a><span class="sd">        word_boundary: When ``True`` (default), a term matches only as a discrete word/phrase on</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-141" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-141"></a><span class="sd">            word boundaries, avoiding the Scunthorpe false positive (``politics`` does not match</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-142" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-142"></a><span class="sd">            ``apolitical``). Set ``False`` for substring matching — required for languages that</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-143" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-143"></a><span class="sd">            do not delimit words with spaces (Chinese, Thai), where word boundaries are</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-144" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-144"></a><span class="sd">            unreliable, or for a deliberate substring policy.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-145" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-145"></a><span class="sd">        case_sensitive: When ``True``, skip case-folding during normalization. Only takes effect</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-146" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-146"></a><span class="sd">            when ``normalize=True`` — case-folding is one step of normalization, so with</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-147" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-147"></a><span class="sd">            ``normalize=False`` matching is fully literal regardless of this flag.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-148" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-148"></a><span class="sd">        normalize: When ``True``, normalize both the text and every term before matching —</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-149" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-149"></a><span class="sd">            Unicode normalization, strip zero-width/format characters, collapse whitespace, and</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-150" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-150"></a><span class="sd">            case-fold (unless ``case_sensitive``). Defeats cheap cosmetic evasions at the cost</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-151" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-151"></a><span class="sd">            of some strictness. Defaults to ``False`` (matching is fully literal): opt in</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-152" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-152"></a><span class="sd">            deliberately, mirroring the engine's off-by-default ``Guard(normalize=...)`` so</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-153" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-153"></a><span class="sd">            normalization is never applied silently. The folds here are script-safe — they</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-154" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-154"></a><span class="sd">            never map homoglyphs (that stays an engine-only concern, ``Guard(normalize=True)``),</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-155" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-155"></a><span class="sd">            so genuine non-Latin letters are not rewritten to ASCII.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-156" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-156"></a><span class="sd">        compatibility_folding: Only takes effect when ``normalize=True``. When ``True`` (default),</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-157" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-157"></a><span class="sd">            use NFKC, which folds full-width and other compatibility variants (``ｇａｍｂｌｉｎｇ`` →</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-158" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-158"></a><span class="sd">            ``gambling``) — a real, documented evasion. When ``False``, use canonical NFC instead,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-159" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-159"></a><span class="sd">            which avoids the UAX #15 over-folding risk but no longer catches full-width forms.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-160" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-160"></a><span class="sd">        report_matched_topic: When ``True``, include the literal ``matched_topic`` in the failure</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-161" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-161"></a><span class="sd">            ``details`` (restores the 0.1.0 proof-of-concept field). Off by default because a</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-162" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-162"></a><span class="sd">            configured term could be a confidential code-name; the surrounding input is never</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-163" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-163"></a><span class="sd">            echoed either way.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-164" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-164"></a><span class="sd">        max_input_chars: Optional resource valve. When set and the rendered text exceeds it, the</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-165" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-165"></a><span class="sd">            text is rejected with ``CONTENT_FILTER_INPUT_TOO_LARGE`` rather than scanned. Off by</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-166" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-166"></a><span class="sd">            default — a hard input-size limit belongs to a dedicated length/size validator; this</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-167" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-167"></a><span class="sd">            is only a safety valve.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-168" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-168"></a>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-169" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-169"></a><span class="sd">    Raises:</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-170" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-170"></a><span class="sd">        ValueError: If ``blocked_topics`` is a single string rather than a list (a bare string</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-171" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-171"></a><span class="sd">            would expand into one-character terms); if ``blocked_topics`` is empty; if any term</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-172" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-172"></a><span class="sd">            is empty or whitespace-only (an empty needle matches every input and would block</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-173" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-173"></a><span class="sd">            everything); if any term is empty after normalization; or if ``max_input_chars`` is</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-174" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-174"></a><span class="sd">            negative (a negative limit exceeds even empty text, so it would reject everything).</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-175" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-175"></a><span class="sd">    """</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-176" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-176"></a>    <span class="c1"># A bare string is itself iterable, so list("politics") would silently expand to</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-177" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-177"></a>    <span class="c1"># ["p", "o", "l", ...] — one-character terms that over-block almost everything. The</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-178" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-178"></a>    <span class="c1"># list[str] hint is not enforced at runtime (a value from config or JSON can still arrive</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-179" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-179"></a>    <span class="c1"># as a str), so reject it explicitly and fail fast rather than misbehave.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-180" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-180"></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">blocked_topics</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-181" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-181"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"blocked_topics must be a list of strings, not a single string."</span><span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-182" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-182"></a>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-183" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-183"></a>    <span class="n">topics</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">blocked_topics</span><span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-184" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-184"></a>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-185" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-185"></a>    <span class="c1"># Fail closed: with nothing to match against, the validator would silently pass every input —</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-186" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-186"></a>    <span class="c1"># a false sense of security. Reject at construction rather than pass everything.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-187" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-187"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">topics</span><span class="p">:</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-188" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-188"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"ContentFilter requires at least one blocked topic in blocked_topics."</span><span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-189" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-189"></a>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-190" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-190"></a>    <span class="c1"># An empty or whitespace-only needle is contained in every possible text, so it would reject</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-191" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-191"></a>    <span class="c1"># all input — the documented LLM Guard empty-string bug. Reject it here, reporting the index</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-192" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-192"></a>    <span class="c1"># never the value, in case the value is a confidential term.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-193" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-193"></a>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">topic</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">topics</span><span class="p">):</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-194" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-194"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">topic</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-195" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-195"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"blocked_topics[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">] is empty or whitespace-only."</span><span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-196" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-196"></a>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-197" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-197"></a>    <span class="k">if</span> <span class="n">max_input_chars</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_input_chars</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-198" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-198"></a>        <span class="c1"># A negative limit makes len(text) &gt; limit true for every candidate — even empty text —</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-199" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-199"></a>        <span class="c1"># so it would reject everything with an impossible bound. Guard it like a real control.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-200" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-200"></a>        <span class="c1"># (0 is allowed: it means "reject any non-empty text".)</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-201" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-201"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max_input_chars must be non-negative, got </span><span class="si">{</span><span class="n">max_input_chars</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-202" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-202"></a>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-203" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-203"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_word_boundary</span> <span class="o">=</span> <span class="n">word_boundary</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-204" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-204"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_report_matched_topic</span> <span class="o">=</span> <span class="n">report_matched_topic</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-205" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-205"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span> <span class="o">=</span> <span class="n">max_input_chars</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-206" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-206"></a>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-207" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-207"></a>    <span class="c1"># Build the normalization profile once. ``None`` means "no normalization" — matching is</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-208" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-208"></a>    <span class="c1"># fully literal. Otherwise the script-safe matching profile (NFKC/NFC + strip format chars</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-209" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-209"></a>    <span class="c1"># + collapse whitespace + casefold); compatibility_folding and case_sensitive only take</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-210" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-210"></a>    <span class="c1"># effect here, which is why they are documented as no-ops when normalize is off.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-211" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-211"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_norm_config</span> <span class="o">=</span> <span class="p">(</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-212" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-212"></a>        <span class="n">NormalizationConfig</span><span class="o">.</span><span class="n">for_validators</span><span class="p">(</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-213" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-213"></a>            <span class="n">compatibility_folding</span><span class="o">=</span><span class="n">compatibility_folding</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-214" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-214"></a>            <span class="n">case_sensitive</span><span class="o">=</span><span class="n">case_sensitive</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-215" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-215"></a>        <span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-216" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-216"></a>        <span class="k">if</span> <span class="n">normalize</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-217" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-217"></a>        <span class="k">else</span> <span class="kc">None</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-218" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-218"></a>    <span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-219" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-219"></a>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-220" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-220"></a>    <span class="c1"># Normalize every term once here, not on each validate() call, since the term list is fixed</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-221" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-221"></a>    <span class="c1"># for the validator's lifetime. A term can survive the empty/whitespace check above yet</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-222" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-222"></a>    <span class="c1"># normalize to nothing (e.g. it was made entirely of zero-width format characters), which</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-223" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-223"></a>    <span class="c1"># would again be a match-everything needle — reject that too, at the one place terms are</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-224" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-224"></a>    <span class="c1"># built. Compile the word-boundary pattern per term now so validate() only runs the search.</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-225" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-225"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_blocked</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_Blocked</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-226" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-226"></a>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">topic</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">topics</span><span class="p">):</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-227" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-227"></a>        <span class="n">normalized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_text</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-228" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-228"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">normalized</span><span class="p">:</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-229" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-229"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"blocked_topics[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">] is empty after normalization."</span><span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-230" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-230"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_blocked</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-231" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-231"></a>            <span class="n">_Blocked</span><span class="p">(</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-232" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-232"></a>                <span class="n">reference_index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-233" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-233"></a>                <span class="n">raw</span><span class="o">=</span><span class="n">topic</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-234" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-234"></a>                <span class="n">normalized</span><span class="o">=</span><span class="n">normalized</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-235" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-235"></a>                <span class="n">pattern</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_compile_boundary_pattern</span><span class="p">(</span><span class="n">normalized</span><span class="p">)</span> <span class="k">if</span> <span class="n">word_boundary</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-236" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-236"></a>            <span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter--source--__codelineno-0-237" name="aegis.validators.detection.ContentFilter--source--__codelineno-0-237"></a>        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="aegis.validators.detection.ContentFilter.validate" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#aegis.validators.detection.ContentFilter.validate" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Inspect the text and report whether it contains any blocked term.</p>
+<p>Scans <code>view.render()</code> — the whole text, so a Markdown/JSON/code wrapper earns no
+exemption. Since <code>render()</code> joins parts with a newline, a term spanning a part boundary is
+caught only when that boundary is a whitespace break; a mid-token split is a residual miss
+(see the ADR).</p>
+<p>Returns the single highest-precedence failure (<code>CONTENT_FILTER_INPUT_TOO_LARGE</code> →
+<code>CONTENT_BLOCKED</code>), or <code>PassedResult</code> if no term matched.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>view</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="              aegis.ContentView(items)
+
+  
+      dataclass
+   (aegis.validators.base.ContentView)" href="../../../api-reference/#aegis.ContentView">ContentView</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The text to inspect as a :class:<code>ContentView</code>. Never <code>None</code>; may be empty.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>metadata</code>
+            </td>
+            <td>
+                  <code><span title="aegis.metadata.GuardMetadata">GuardMetadata</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Surrounding agent context. Not read by this validator; may be <code>None</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>PassedResult</code> with <code>details = {"terms_checked", "word_boundary"}</code> when no term</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>matched, or a <code>FailedResult</code> carrying the <code>CONTENT_BLOCKED</code> code and a safe-summary</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>details</code> mapping (no surrounding input; the literal term only when</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>report_matched_topic=True</code>).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/aegis/validators/detection/content_filter.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-239">239</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-240">240</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-241">241</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-242">242</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-243">243</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-244">244</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-245">245</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-246">246</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-247">247</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-248">248</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-249">249</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-250">250</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-251">251</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-252">252</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-253">253</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-254">254</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-255">255</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-256">256</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-257">257</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-258">258</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-259">259</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-260">260</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-261">261</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-262">262</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-263">263</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-264">264</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-265">265</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-266">266</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-267">267</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-268">268</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-269">269</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-270">270</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-271">271</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-272">272</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-273">273</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-274">274</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-275">275</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-276">276</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-277">277</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-278">278</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-279">279</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-280">280</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-281">281</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-282">282</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-283">283</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-284">284</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-285">285</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-286">286</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-287">287</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-288">288</a></span>
+<span class="normal"><a href="#aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-289">289</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-239" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-239"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-240" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-240"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-241" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-241"></a>    <span class="n">view</span><span class="p">:</span> <span class="n">ContentView</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-242" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-242"></a>    <span class="n">metadata</span><span class="p">:</span> <span class="n">GuardMetadata</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-243" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-243"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationResult</span><span class="p">:</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-244" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-244"></a><span class="w">    </span><span class="sd">"""Inspect the text and report whether it contains any blocked term.</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-245" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-245"></a>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-246" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-246"></a><span class="sd">    Scans ``view.render()`` — the whole text, so a Markdown/JSON/code wrapper earns no</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-247" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-247"></a><span class="sd">    exemption. Since ``render()`` joins parts with a newline, a term spanning a part boundary is</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-248" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-248"></a><span class="sd">    caught only when that boundary is a whitespace break; a mid-token split is a residual miss</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-249" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-249"></a><span class="sd">    (see the ADR).</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-250" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-250"></a>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-251" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-251"></a><span class="sd">    Returns the single highest-precedence failure (``CONTENT_FILTER_INPUT_TOO_LARGE`` →</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-252" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-252"></a><span class="sd">    ``CONTENT_BLOCKED``), or ``PassedResult`` if no term matched.</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-253" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-253"></a>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-254" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-254"></a><span class="sd">    Args:</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-255" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-255"></a><span class="sd">        view: The text to inspect as a :class:`ContentView`. Never ``None``; may be empty.</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-256" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-256"></a><span class="sd">        metadata: Surrounding agent context. Not read by this validator; may be ``None``.</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-257" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-257"></a>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-258" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-258"></a><span class="sd">    Returns:</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-259" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-259"></a><span class="sd">        ``PassedResult`` with ``details = {"terms_checked", "word_boundary"}`` when no term</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-260" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-260"></a><span class="sd">        matched, or a ``FailedResult`` carrying the ``CONTENT_BLOCKED`` code and a safe-summary</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-261" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-261"></a><span class="sd">        ``details`` mapping (no surrounding input; the literal term only when</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-262" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-262"></a><span class="sd">        ``report_matched_topic=True``).</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-263" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-263"></a><span class="sd">    """</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-264" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-264"></a>    <span class="n">raw_text</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-265" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-265"></a>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-266" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-266"></a>    <span class="c1"># The size valve runs first: it is both the highest-precedence failure and the point of the</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-267" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-267"></a>    <span class="c1"># cap — reject an oversized candidate before doing any scanning work.</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-268" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-268"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">raw_text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span><span class="p">:</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-269" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-269"></a>        <span class="k">return</span> <span class="n">FailedResult</span><span class="p">(</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-270" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-270"></a>            <span class="n">error_code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CONTENT_FILTER_INPUT_TOO_LARGE</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-271" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-271"></a>            <span class="n">error_message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Text exceeds the </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span><span class="si">}</span><span class="s2">-character inspection limit."</span><span class="p">,</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-272" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-272"></a>            <span class="n">details</span><span class="o">=</span><span class="p">{</span><span class="s2">"length"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">raw_text</span><span class="p">),</span> <span class="s2">"limit"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span><span class="p">},</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-273" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-273"></a>        <span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-274" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-274"></a>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-275" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-275"></a>    <span class="c1"># Nothing can match in empty or whitespace-only text.</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-276" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-276"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-277" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-277"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_passed</span><span class="p">()</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-278" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-278"></a>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-279" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-279"></a>    <span class="n">norm_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_text</span><span class="p">(</span><span class="n">raw_text</span><span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-280" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-280"></a>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-281" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-281"></a>    <span class="c1"># Scan every term and collect the earliest offset each matching term hits at. match_count is</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-282" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-282"></a>    <span class="c1"># the number of *distinct* configured terms that matched at least once — a count, never a</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-283" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-283"></a>    <span class="c1"># list of snippets — and _select picks the single reported verdict deterministically.</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-284" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-284"></a>    <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">match</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blocked</span> <span class="k">if</span> <span class="p">(</span><span class="n">match</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">norm_text</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-285" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-285"></a>    <span class="n">winner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-286" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-286"></a>    <span class="k">if</span> <span class="n">winner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-287" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-287"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_failure</span><span class="p">(</span><span class="n">winner</span><span class="p">,</span> <span class="n">match_count</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">))</span>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-288" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-288"></a>
+<a id="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-289" name="aegis.validators.detection.ContentFilter.validate--source--__codelineno-0-289"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_passed</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "content.code.annotate", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.expand", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

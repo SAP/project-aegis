@@ -1,0 +1,2364 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Open-core guardrail library for A2A agent executors">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Aegis: a2a-sdk v0.3 → v1.0 migration - Project Aegis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#aegis-a2a-sdk-v03-v10-migration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Project Aegis" class="md-header__button md-logo" aria-label="Project Aegis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Project Aegis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Aegis: a2a-sdk v0.3 → v1.0 migration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SAP/project-aegis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SAP/project-aegis
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Documentation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../cookbook/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Cookbook
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../validators/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Validators
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../changelog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Project Aegis" class="md-nav__button md-logo" aria-label="Project Aegis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3"/></svg>
+
+    </a>
+    Project Aegis
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SAP/project-aegis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SAP/project-aegis
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Documentation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../a2a-wrapper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A2A Wrapper
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mutation-guard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MutationGuard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cookbook
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cookbook
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cookbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cookbook/agent-executor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AgentExecutor Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cookbook/agent-stream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    agent.stream() Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cookbook/standalone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standalone Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cookbook/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../validators/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validators
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Validators
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom-validators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Validators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validators/authoring-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Detection
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validators/detection/length-validator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Length Validator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validators/detection/prompt-leakage-check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompt Leakage Check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validators/detection/size-validator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Size Validator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validators/detection/content-filter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Content Filter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validators/detection/formula-injection-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formula Injection Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validators/detection/sql-injection-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Injection Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validators/detection/xss-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XSS Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validators/detection/xxe-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XXE Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mutation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mutation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validators/mutation/html-sanitizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTML Sanitizer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tldr-what-actually-breaks-aegis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TL;DR — what actually breaks Aegis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-blast-radius-by-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Blast radius by file
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-partmessage-model-change-the-hard-part" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The Part/Message model change (the hard part)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The Part/Message model change (the hard part)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#v03-pydantic-rootmodel-union" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.3 (Pydantic RootModel union)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v10-protobuf-flat-union" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.0 (Protobuf flat union)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#concrete-rewrites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concrete rewrites
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-helper-util-import-moves" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Helper / util import moves
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-enum-renames-mechanical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Enum renames (mechanical)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-server-internal-types-verify-not-covered-by-upstream-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Server-internal types — VERIFY, not covered by upstream guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-not-aegiss-problem-tell-your-consumers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Not Aegis's problem (tell your consumers)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-backward-compatibility-supporting-both-sdks-from-one-aegis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Backward compatibility — supporting both SDKs from one Aegis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Backward compatibility — supporting both SDKs from one Aegis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-a-single-codebase-can-support-both" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why a single codebase can support both
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-shim-srcaegisa2a_compatpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The shim: src/aegis/a2a/_compat.py
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#declaring-the-dependency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declaring the dependency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-drop-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to drop it
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alternatives-if-the-shims-runtime-branching-bothers-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alternatives (if the shim's runtime branching bothers you)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-suggested-migration-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Suggested migration order
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-as-built-verified-against-a2a-sdk-112" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. As-built — verified against a2a-sdk 1.1.2
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. As-built — verified against a2a-sdk 1.1.2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shape-shipped-dual-sdk-shim-7-lock-pinned-to-1x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shape shipped: dual-SDK shim (§7), lock pinned to 1.x
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#corrections-the-guide-got-these-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Corrections — the guide got these wrong
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additions-sdk-changes-the-guide-didnt-cover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions — SDK changes the guide didn't cover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eventqueue-direct-instantiation-deprecated-on-1x-owned-test-subclass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EventQueue() direct instantiation — deprecated on 1.x (owned test subclass)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="aegis-a2a-sdk-v03-v10-migration">Aegis: a2a-sdk v0.3 → v1.0 migration<a class="headerlink" href="#aegis-a2a-sdk-v03-v10-migration" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Scope note: Aegis is a <strong>server-side wrapper library</strong>. It wraps <code>AgentExecutor</code>,
+<code>EventQueue</code>, and <code>RequestContext</code>, and transforms <code>Part</code>/<code>Message</code>/<code>Artifact</code>
+objects. It builds <strong>no</strong> servers, clients, or <code>AgentCard</code>s. So most of the
+upstream migration guide does not touch Aegis code — it touches <em>your consumers'</em>
+apps. This doc separates the two.</p>
+</blockquote>
+<h2 id="tldr-what-actually-breaks-aegis">TL;DR — what actually breaks Aegis<a class="headerlink" href="#tldr-what-actually-breaks-aegis" title="Permanent link">&para;</a></h2>
+<p>Two changes account for ~all the work:</p>
+<ol>
+<li><strong>Pydantic → Protobuf types.</strong> <code>Part(root=TextPart(...))</code>, <code>part.root</code>,
+   <code>isinstance(part.root, TextPart)</code>, and every <code>.model_copy(update=...)</code> call
+   stop working. This is the core of <code>_utils.py</code>, plus clones in <code>context.py</code>
+   and <code>event_queue.py</code>.</li>
+<li><strong><code>a2a.utils</code> → <code>a2a.helpers</code></strong>, and <code>new_agent_text_message</code> no longer exists.</li>
+</ol>
+<p>Everything else (enum renames, one import move) is mechanical. AgentCard, server
+setup, client, and push-notification changes <strong>do not apply to Aegis</strong> — see the
+"Not Aegis's problem" section so you can tell consumers what <em>they</em> must change.</p>
+<hr />
+<h2 id="1-blast-radius-by-file">1. Blast radius by file<a class="headerlink" href="#1-blast-radius-by-file" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What breaks</th>
+<th>Severity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/aegis/a2a/_utils.py</code></td>
+<td><code>part.root</code>, <code>isinstance(part.root, TextPart)</code>, <code>Part(root=...)</code>, <code>part.root.model_copy(...)</code>, <code>import TextPart</code></td>
+<td><strong>High</strong> — core projection layer</td>
+</tr>
+<tr>
+<td><code>src/aegis/a2a/event_queue.py</code></td>
+<td><code>Part(root=TextPart(...))</code>, <code>event.model_copy</code>, <code>event.artifact.model_copy</code>, <code>import TextPart</code></td>
+<td><strong>High</strong></td>
+</tr>
+<tr>
+<td><code>src/aegis/a2a/context.py</code></td>
+<td><code>context.message.model_copy(...)</code>, <code>from a2a.utils import get_message_text</code></td>
+<td><strong>High</strong></td>
+</tr>
+<tr>
+<td><code>src/aegis/a2a/executor.py</code></td>
+<td><code>from a2a.utils import new_agent_text_message, new_task</code>, <code>TaskState.rejected</code>, <code>TaskUpdater</code> args</td>
+<td><strong>Medium</strong></td>
+</tr>
+<tr>
+<td><code>pyproject.toml</code></td>
+<td>version pin <code>a2a-sdk&gt;=0.3.20,&lt;0.4</code></td>
+<td>trivial</td>
+</tr>
+<tr>
+<td><code>tests/**</code></td>
+<td><code>Part(root=TextPart(...))</code>, <code>Role.user</code>, <code>TaskState.*</code>, <code>FilePart/DataPart/FileWithBytes</code></td>
+<td>mechanical, high volume</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-the-partmessage-model-change-the-hard-part">2. The Part/Message model change (the hard part)<a class="headerlink" href="#2-the-partmessage-model-change-the-hard-part" title="Permanent link">&para;</a></h2>
+<h3 id="v03-pydantic-rootmodel-union">v0.3 (Pydantic <code>RootModel</code> union)<a class="headerlink" href="#v03-pydantic-rootmodel-union" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">a2a.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Part</span><span class="p">,</span> <span class="n">TextPart</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">Part</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">TextPart</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">"hi"</span><span class="p">))</span>           <span class="c1"># wrap, then access via .root</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">isinstance</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">TextPart</span><span class="p">)</span>          <span class="c1"># discriminate by wrapper type</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">part</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">text</span>                           <span class="c1"># read text</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">part</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">model_copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">"text"</span><span class="p">:</span> <span class="n">x</span><span class="p">})</span> <span class="c1"># copy via Pydantic</span>
+</code></pre></div>
+<h3 id="v10-protobuf-flat-union">v1.0 (Protobuf flat union)<a class="headerlink" href="#v10-protobuf-flat-union" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">a2a.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Part</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">Part</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">"hi"</span><span class="p">)</span>                          <span class="c1"># flat — no wrapper, no .root</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">part</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s2">"text"</span><span class="p">)</span>                    <span class="c1"># discriminate via HasField()</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">part</span><span class="o">.</span><span class="n">text</span>                                <span class="c1"># read text</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># copy: protobuf has no model_copy — see below</span>
+</code></pre></div>
+<h3 id="concrete-rewrites">Concrete rewrites<a class="headerlink" href="#concrete-rewrites" title="Permanent link">&para;</a></h3>
+<p><strong><code>_utils.py :: build_view</code></strong> — the type discriminator changes from <code>isinstance</code> to <code>HasField</code>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># v0.3</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">ContentItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">_part_id</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="nb">type</span><span class="o">=</span><span class="n">ContentType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">part</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">TextPart</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">]</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># v1.0</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">ContentItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">_part_id</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="nb">type</span><span class="o">=</span><span class="n">ContentType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">part</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s2">"text"</span><span class="p">)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">]</span>
+</code></pre></div></p>
+<p><strong><code>_utils.py :: apply_view</code></strong> — the copy-with-update. Protobuf has <strong>no <code>model_copy</code></strong>.
+Options (pick one, verify against the shipped SDK):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Option A — copy the proto, mutate the field in place (protobuf idiom)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">_copy_with_text</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">new</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">part</span><span class="p">)()</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">new</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">new</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="k">return</span> <span class="n">new</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Option B — if a2a.helpers exposes a Part text constructor, rebuild:</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1">#   Part(text=text)   # only safe when the part carries nothing but text</span>
+</code></pre></div>
+<code>build_view</code>/<code>apply_view</code> only ever address <strong>text</strong> parts today and preserve
+non-text parts untouched. Option B (<code>Part(text=...)</code>) <em>looks</em> viable because of
+that, but <strong>prefer Option A (<code>CopyFrom</code>)</strong>: Aegis is slated to support file/data
+parts in future, and Option B silently drops any sibling field on the part
+(metadata, and eventually file/data payloads on mixed parts). <code>CopyFrom</code>-then-mutate
+is future-proof; <code>Part(text=...)</code> bakes in the text-only assumption you're planning
+to remove. <strong>Verify against the real v1.0 <code>Part</code> proto before committing</strong> — this
+is the one place the upstream guide is thin on server-side detail.</p>
+<p><strong><code>event_queue.py</code></strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># v0.3</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">Part</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">TextPart</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">resolved</span><span class="p">))]</span>                              <span class="c1"># line ~197</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">return</span> <span class="n">event</span><span class="o">.</span><span class="n">model_copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">"artifact"</span><span class="p">:</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        <span class="n">event</span><span class="o">.</span><span class="n">artifact</span><span class="o">.</span><span class="n">model_copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">"parts"</span><span class="p">:</span> <span class="n">parts</span><span class="p">})})</span>              <span class="c1"># line ~164</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># v1.0</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">Part</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">resolved</span><span class="p">)]</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">new</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">event</span><span class="p">)();</span> <span class="n">new</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="k">del</span> <span class="n">new</span><span class="o">.</span><span class="n">artifact</span><span class="o">.</span><span class="n">parts</span><span class="p">[:];</span> <span class="n">new</span><span class="o">.</span><span class="n">artifact</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>               <span class="c1"># proto repeated-field write</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="k">return</span> <span class="n">new</span>
+</code></pre></div></p>
+<p><strong><code>context.py</code></strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># v0.3</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="bp">self</span><span class="o">.</span><span class="n">_guarded_message</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">model_copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">"parts"</span><span class="p">:</span> <span class="n">mutated_parts</span><span class="p">})</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># v1.0</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">msg</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">message</span><span class="p">)();</span> <span class="n">msg</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">del</span> <span class="n">msg</span><span class="o">.</span><span class="n">parts</span><span class="p">[:];</span> <span class="n">msg</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">mutated_parts</span><span class="p">)</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="bp">self</span><span class="o">.</span><span class="n">_guarded_message</span> <span class="o">=</span> <span class="n">msg</span>
+</code></pre></div></p>
+<blockquote>
+<p>These <code>CopyFrom</code> + repeated-field patterns are protobuf standard. The exact
+field names (<code>parts</code>, <code>artifact</code>, <code>text</code>) should match the v1.0 protos; confirm
+once against the installed package.</p>
+</blockquote>
+<hr />
+<h2 id="3-helper-util-import-moves">3. Helper / util import moves<a class="headerlink" href="#3-helper-util-import-moves" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>v0.3</th>
+<th>v1.0</th>
+<th>Used in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>from a2a.utils import get_message_text</code></td>
+<td><code>from a2a.helpers import get_message_text</code></td>
+<td><code>context.py:5</code></td>
+</tr>
+<tr>
+<td><code>from a2a.utils import new_task</code></td>
+<td><code>from a2a.helpers import new_task</code></td>
+<td><code>executor.py:11</code>, tests</td>
+</tr>
+<tr>
+<td><code>from a2a.utils import new_agent_text_message</code></td>
+<td><strong>removed</strong> — use <code>new_message</code> / <code>new_text_message</code></td>
+<td><code>executor.py:11,381</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>new_agent_text_message</code> has no drop-in replacement.</strong> v0.3 signature was
+<code>new_agent_text_message(text, context_id, task_id)</code>. In v1.0:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">a2a.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">new_message</span>   <span class="c1"># role defaults to ROLE_AGENT</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># was: new_agent_text_message(error_message, task.context_id, task.id)</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># now (verify param names against helpers signature):</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">new_message</span><span class="p">([</span><span class="n">Part</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">error_message</span><span class="p">)],</span> <span class="n">task_id</span><span class="o">=</span><span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">context_id</span><span class="o">=</span><span class="n">task</span><span class="o">.</span><span class="n">context_id</span><span class="p">)</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># or new_text_message(text=error_message, ...) if it accepts task/context ids</span>
+</code></pre></div></p>
+<hr />
+<h2 id="4-enum-renames-mechanical">4. Enum renames (mechanical)<a class="headerlink" href="#4-enum-renames-mechanical" title="Permanent link">&para;</a></h2>
+<p>Only two enums are used in Aegis: <code>TaskState</code> and <code>Role</code>.</p>
+<table>
+<thead>
+<tr>
+<th>v0.3</th>
+<th>v1.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TaskState.rejected</code></td>
+<td><code>TaskState.TASK_STATE_REJECTED</code></td>
+</tr>
+<tr>
+<td><code>TaskState.completed</code></td>
+<td><code>TaskState.TASK_STATE_COMPLETED</code></td>
+</tr>
+<tr>
+<td><code>Role.user</code></td>
+<td><code>Role.ROLE_USER</code></td>
+</tr>
+<tr>
+<td><code>Role.agent</code></td>
+<td><code>Role.ROLE_AGENT</code></td>
+</tr>
+</tbody>
+</table>
+<p>Locations: <code>executor.py:381</code> (<code>TaskState.rejected</code>); tests use <code>TaskState.completed/rejected</code>
+and <code>Role.user</code> throughout <code>tests/integration/*</code> and <code>tests/unit/test_guarded_context.py</code>.</p>
+<hr />
+<h2 id="5-server-internal-types-verify-not-covered-by-upstream-guide">5. Server-internal types — VERIFY, not covered by upstream guide<a class="headerlink" href="#5-server-internal-types-verify-not-covered-by-upstream-guide" title="Permanent link">&para;</a></h2>
+<p>The upstream guide documents the <strong>client</strong> and <strong>app-setup</strong> surface. Aegis lives
+on server internals the guide barely mentions. Confirm these still exist / same shape
+in v1.0 before trusting the migration:</p>
+<ul>
+<li><code>a2a.server.agent_execution.RequestContext</code> — Aegis subclasses it and reads
+  <code>._params</code>, <code>.task_id</code>, <code>.context_id</code>, <code>.current_task</code>, <code>.related_tasks</code>,
+  <code>.call_context</code>, <code>.message</code>. <strong><code>GuardedContext</code> is the biggest risk</strong> if the
+  base constructor signature changed.</li>
+<li><code>a2a.server.events.{Event, EventQueue}</code> — <code>GuardedEventQueue</code> proxies these.</li>
+<li><code>a2a.server.tasks.TaskUpdater(event_queue, task_id, context_id)</code> and
+  <code>.update_status(state, message, final=True)</code> — used in <code>_reject_task</code>.</li>
+<li><code>TaskArtifactUpdateEvent</code>, <code>Artifact</code>, <code>Task</code>, <code>TaskStatusUpdateEvent</code> field
+  access (<code>event.artifact.parts</code>, <code>task.context_id</code>, <code>task.id</code>).</li>
+</ul>
+<p>The client guide shows <code>StreamResponse</code> wrapping <code>artifact_update</code>/<code>status_update</code>
+on the <strong>client</strong> side; server-side event types may keep their own shape. Don't
+assume — check the installed <code>a2a.server.events</code>.</p>
+<hr />
+<h2 id="6-not-aegiss-problem-tell-your-consumers">6. Not Aegis's problem (tell your consumers)<a class="headerlink" href="#6-not-aegiss-problem-tell-your-consumers" title="Permanent link">&para;</a></h2>
+<p>These upstream v1.0 changes are <strong>app-level</strong> — Aegis never touches them, but your
+docs/examples/README should point consumers at the upstream guide for:</p>
+<ul>
+<li><code>DefaultRequestHandler(..., agent_card=...)</code> now required</li>
+<li><code>A2AStarletteApplication</code> etc. removed → <code>create_jsonrpc_routes()</code> / <code>create_rest_routes()</code> / <code>create_agent_card_routes()</code></li>
+<li><code>AgentCard</code> restructure (<code>supported_interfaces</code>, <code>AgentInterface</code>, modes moved)</li>
+<li><code>create_client()</code> replaces <code>A2AClient</code>/<code>ClientFactory</code></li>
+<li><code>send_message()</code> returns <code>AsyncIterator[StreamResponse]</code></li>
+<li><code>ClientConfig.push_notification_config</code> singular</li>
+<li>v0.3 compat flag (<code>enable_v0_3_compat=True</code>) if consumers run mixed fleets</li>
+</ul>
+<p><code>docs/getting-started.md</code>, <code>docs/installation.md</code>, and <code>docs/a2a-wrapper.md</code> likely
+show consumer app setup — audit those for the removed wrapper classes.</p>
+<hr />
+<h2 id="7-backward-compatibility-supporting-both-sdks-from-one-aegis">7. Backward compatibility — supporting both SDKs from one Aegis<a class="headerlink" href="#7-backward-compatibility-supporting-both-sdks-from-one-aegis" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>Two different "v0.3 compat" ideas — don't conflate them:</strong>
+- <strong>Upstream <code>enable_v0_3_compat=True</code></strong> (§6) = a v1.0 <em>server</em> accepting v0.3
+  <em>wire clients</em>. App-level. Not aegis. Consumers set it on their route factories.
+- <strong>This section</strong> = aegis-the-library working whether the installed <code>a2a-sdk</code>
+  is 0.3 <strong>or</strong> 1.0, so existing 0.3 agents don't break when Aegis adds 1.0
+  support. This is the one that matters for a library shipped to many agents.</p>
+</blockquote>
+<h3 id="why-a-single-codebase-can-support-both">Why a single codebase can support both<a class="headerlink" href="#why-a-single-codebase-can-support-both" title="Permanent link">&para;</a></h3>
+<p>Aegis's entire version-sensitive surface is ~6 primitive operations, and they're
+already funneled through one seam (<code>build_view</code>/<code>apply_view</code>
++ two clones). Everything else — the speculative executor, the holdback buffer,
+config dataclasses — is version-agnostic and doesn't change.
+Isolate those 6 primitives behind a compat module and the rest of Aegis never
+imports a version-specific symbol.</p>
+<p><strong>Critical constraint:</strong> Aegis src must <strong>not</strong> do top-level
+<code>from a2a.types import TextPart</code> anywhere — that import <em>fails to load</em> on v1.0
+(the type is gone). All version-specific imports move into <code>_compat.py</code>.</p>
+<h3 id="the-shim-srcaegisa2a_compatpy">The shim: <code>src/aegis/a2a/_compat.py</code><a class="headerlink" href="#the-shim-srcaegisa2a_compatpy" title="Permanent link">&para;</a></h3>
+<p>Detect the version once with <strong>EAFP import guards</strong> (more robust than parsing the
+version string — handles pre-releases/forks):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># src/aegis/a2a/_compat.py</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">a2a.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Part</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="c1"># v0.3: wrapper types exist</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">a2a.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextPart</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="n">_V03</span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    <span class="n">TextPart</span> <span class="o">=</span> <span class="kc">None</span>            <span class="c1"># type: ignore</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>    <span class="n">_V03</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="k">if</span> <span class="n">_V03</span><span class="p">:</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_text_part</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>            <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">TextPart</span><span class="p">)</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">part_text</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>                <span class="k">return</span> <span class="n">part</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">text</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">make_text_part</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Part</span><span class="p">:</span>     <span class="k">return</span> <span class="n">Part</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">TextPart</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">))</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">copy_text_part</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Part</span><span class="p">:</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>        <span class="k">return</span> <span class="n">Part</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">part</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">model_copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">"text"</span><span class="p">:</span> <span class="n">text</span><span class="p">}))</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">copy_with_parts</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">parts</span><span class="p">):</span>           <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">model_copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">"parts"</span><span class="p">:</span> <span class="n">parts</span><span class="p">})</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">copy_artifact_event</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">parts</span><span class="p">):</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>        <span class="k">return</span> <span class="n">event</span><span class="o">.</span><span class="n">model_copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">"artifact"</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">artifact</span><span class="o">.</span><span class="n">model_copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">"parts"</span><span class="p">:</span> <span class="n">parts</span><span class="p">})})</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">a2a.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskState</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>    <span class="n">TASK_STATE_REJECTED</span> <span class="o">=</span> <span class="n">TaskState</span><span class="o">.</span><span class="n">rejected</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">a2a.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_message_text</span><span class="p">,</span> <span class="n">new_task</span><span class="p">,</span> <span class="n">new_agent_text_message</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_text_part</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>            <span class="k">return</span> <span class="n">part</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s2">"text"</span><span class="p">)</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">part_text</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>                <span class="k">return</span> <span class="n">part</span><span class="o">.</span><span class="n">text</span>
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">make_text_part</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Part</span><span class="p">:</span>     <span class="k">return</span> <span class="n">Part</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">copy_text_part</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Part</span><span class="p">:</span>
+<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>        <span class="n">new</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">part</span><span class="p">)();</span> <span class="n">new</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">part</span><span class="p">);</span> <span class="n">new</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">;</span> <span class="k">return</span> <span class="n">new</span>
+<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">copy_with_parts</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">parts</span><span class="p">):</span>
+<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>        <span class="n">new</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)();</span> <span class="n">new</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a>        <span class="k">del</span> <span class="n">new</span><span class="o">.</span><span class="n">parts</span><span class="p">[:];</span> <span class="n">new</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">parts</span><span class="p">);</span> <span class="k">return</span> <span class="n">new</span>
+<a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">copy_artifact_event</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">parts</span><span class="p">):</span>
+<a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a>        <span class="n">new</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">event</span><span class="p">)();</span> <span class="n">new</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a>        <span class="k">del</span> <span class="n">new</span><span class="o">.</span><span class="n">artifact</span><span class="o">.</span><span class="n">parts</span><span class="p">[:];</span> <span class="n">new</span><span class="o">.</span><span class="n">artifact</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">parts</span><span class="p">);</span> <span class="k">return</span> <span class="n">new</span>
+<a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">a2a.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskState</span>
+<a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a>    <span class="n">TASK_STATE_REJECTED</span> <span class="o">=</span> <span class="n">TaskState</span><span class="o">.</span><span class="n">TASK_STATE_REJECTED</span>
+<a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">a2a.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_message_text</span><span class="p">,</span> <span class="n">new_task</span>
+<a id="__codelineno-7-40" name="__codelineno-7-40" href="#__codelineno-7-40"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">a2a.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">new_message</span> <span class="k">as</span> <span class="n">_new_message</span>
+<a id="__codelineno-7-41" name="__codelineno-7-41" href="#__codelineno-7-41"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">new_agent_text_message</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">context_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">task_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<a id="__codelineno-7-42" name="__codelineno-7-42" href="#__codelineno-7-42"></a>        <span class="k">return</span> <span class="n">_new_message</span><span class="p">([</span><span class="n">Part</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)],</span> <span class="n">task_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span> <span class="n">context_id</span><span class="o">=</span><span class="n">context_id</span><span class="p">)</span>
+</code></pre></div>
+<p>Then the seam files import from the shim instead of <code>a2a</code> directly:</p>
+<ul>
+<li><strong><code>_utils.py</code></strong>: <code>build_view</code> uses <code>is_text_part</code>/<code>part_text</code>; <code>apply_view</code> uses
+  <code>copy_text_part</code>.</li>
+<li><strong><code>event_queue.py</code></strong>: <code>Part(root=TextPart(...))</code> → <code>make_text_part(...)</code>;
+  the <code>event.model_copy(...)</code> line → <code>copy_artifact_event(event, parts)</code>.</li>
+<li><strong><code>context.py</code></strong>: <code>context.message.model_copy(...)</code> → <code>copy_with_parts(msg, parts)</code>;
+  <code>get_message_text</code> from shim.</li>
+<li><strong><code>executor.py</code></strong>: <code>new_task</code>/<code>new_agent_text_message</code>/<code>TASK_STATE_REJECTED</code> from shim.</li>
+</ul>
+<p><strong>Future data-type support:</strong> Aegis handles only text parts today, but file/data
+parts are on the roadmap. When they land, the shim is the natural extension point —
+add <code>is_file_part</code>/<code>part_file</code>/<code>make_data_part</code> etc. alongside the text primitives,
+version-branched the same way. Keep the text-only <code>Part(text=...)</code> shortcut <em>out</em>
+of <code>copy_text_part</code> (use <code>CopyFrom</code>, per §2) so mixed parts carrying both text and
+a payload don't lose data once non-text support arrives. <code>build_view</code>/<code>apply_view</code>
+will grow to project non-text <code>ContentItem</code> types, but the seam stays the seam.</p>
+<p><code>GuardedContext</code>'s base-class construction (§5) is the one thing a shim can't fully
+paper over if the <code>RequestContext.__init__</code> signature diverged between versions —
+verify that constructor on both SDKs; if it differs, the shim needs a
+<code>build_request_context(...)</code> primitive too.</p>
+<h3 id="declaring-the-dependency">Declaring the dependency<a class="headerlink" href="#declaring-the-dependency" title="Permanent link">&para;</a></h3>
+<p>Keep the pin <strong>wide</strong>, not split:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># pyproject.toml — one package, both majors</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"a2a-sdk&gt;=0.3.20,&lt;2"</span><span class="p">]</span>
+</code></pre></div>
+Add a CI matrix testing against <code>a2a-sdk==0.3.*</code> and <code>a2a-sdk==1.*</code> so the shim
+can't silently rot on one side. The full test suite already exercises the seam —
+run it twice, once per pinned major.</p>
+<h3 id="when-to-drop-it">When to drop it<a class="headerlink" href="#when-to-drop-it" title="Permanent link">&para;</a></h3>
+<p>The shim is deliberate, tracked debt. Remove the <code>_V03</code> branch (and widen the pin
+to <code>&gt;=1.0.0,&lt;2</code>) once your fleet's 0.3 agents have migrated — the code collapses
+back to the v1.0-only forms in §2–4. Mark it:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># TODO: dual-SDK shim — delete the _V03 branch once no consumer pins a2a-sdk &lt;1.0</span>
+</code></pre></div>
+<h3 id="alternatives-if-the-shims-runtime-branching-bothers-you">Alternatives (if the shim's runtime branching bothers you)<a class="headerlink" href="#alternatives-if-the-shims-runtime-branching-bothers-you" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Optional extras</strong> — <code>aegis[a2a03]</code> vs <code>aegis[a2a1]</code> with version-gated pins.
+  Simpler code, but consumers must pick the right extra; the import-time branch
+  problem (top-level <code>TextPart</code> import) still forces a <code>_compat.py</code> anyway.</li>
+<li><strong>Major-version split</strong> — Aegis <code>1.x</code> → a2a 0.3, Aegis <code>2.x</code> → a2a 1.0. Cleanest
+  code (no branching), but two maintenance lines and consumers must bump Aegis in
+  lockstep. Only worth it if the shim surface grows well past these 6 primitives.</li>
+</ul>
+<p><strong>Recommendation:</strong> the shim. The surface is tiny and already isolated; one
+package that "just works" on both is the least friction for a fleet mid-migration.</p>
+<hr />
+<h2 id="8-suggested-migration-order">8. Suggested migration order<a class="headerlink" href="#8-suggested-migration-order" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Bump pin: <code>a2a-sdk&gt;=1.0.0,&lt;2</code> in <code>pyproject.toml</code>; <code>uv sync</code>. Let imports fail loudly.</li>
+<li>Fix <code>_utils.py</code> first (<code>build_view</code>/<code>apply_view</code>) — everything routes through it.
+   Nail the Part copy semantics (§2) and keep the Part cardinality guarantee.</li>
+<li>Fix <code>context.py</code> and <code>event_queue.py</code> clones (<code>CopyFrom</code> + repeated fields).</li>
+<li>Fix <code>executor.py</code> imports/enums/<code>new_agent_text_message</code>.</li>
+<li>Update helper imports repo-wide (<code>a2a.utils</code> → <code>a2a.helpers</code>).</li>
+<li>Migrate tests mechanically (<code>Part(root=TextPart)</code> → <code>Part(text=)</code>, enum renames,
+   <code>FilePart/DataPart</code> → flat <code>Part(file=)/Part(data=)</code>).</li>
+<li>Run the suite. The integration tests in <code>tests/integration/test_a2a_pipeline.py</code>
+   and <code>test_guarded_*</code> are the real acceptance gate.</li>
+</ol>
+<p><strong>Unverified assumptions flagged above</strong> (§2 Part copy, §5 server internals) are the
+only places this could go sideways — resolve those against the installed SDK first.</p>
+<hr />
+<h2 id="9-as-built-verified-against-a2a-sdk-112">9. As-built — verified against a2a-sdk 1.1.2<a class="headerlink" href="#9-as-built-verified-against-a2a-sdk-112" title="Permanent link">&para;</a></h2>
+<p>Everything above §9 was written speculatively (hence the "verify against the installed
+SDK" caveats). This section records what the migration actually took once run against
+the real SDK. <strong>Where §9 conflicts with §1–§8, §9 wins.</strong></p>
+<h3 id="shape-shipped-dual-sdk-shim-7-lock-pinned-to-1x">Shape shipped: dual-SDK shim (§7), lock pinned to 1.x<a class="headerlink" href="#shape-shipped-dual-sdk-shim-7-lock-pinned-to-1x" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>src/aegis/a2a/_compat.py</code> — the shim. <code>pyproject.toml</code> stays <code>a2a-sdk&gt;=0.3.20,&lt;2</code>;
+  <strong><code>uv.lock</code> pins 1.1.2</strong>, so the default dev/CI environment is v1.</li>
+<li><code>tests/_a2a_compat.py</code> — a test-side twin (version-agnostic object builders/readers)
+  so the whole suite runs on both majors. <code>pythonpath = ["tests"]</code> in the pytest config
+  lets <code>tests/unit/</code> and <code>tests/integration/</code> do <code>from _a2a_compat import ...</code>. It is a
+  helper module, not a test case — hence it lives at the <code>tests/</code> root, not in a subfolder.</li>
+<li>CI: the suite runs in a dedicated test workflow with two legs — the primary job runs on the
+  locked 1.x environment with coverage; a second job pins <code>a2a-sdk==0.3.*</code> as a <strong>pass/fail-only</strong>
+  0.3 leg so the shim can't silently rot on the 0.3 side.</li>
+</ul>
+<h3 id="corrections-the-guide-got-these-wrong">Corrections — the guide got these wrong<a class="headerlink" href="#corrections-the-guide-got-these-wrong" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Guide said</th>
+<th>Reality on 1.1.2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§3: <code>from a2a.helpers import new_task</code> (drop-in)</td>
+<td><strong>Wrong.</strong> v1 <code>new_task(task_id, context_id, state, ...)</code> is a <em>different</em> function. The 0.3 <code>new_task(message)</code> equivalent is <strong><code>new_task_from_user_message(message)</code></strong>.</td>
+</tr>
+<tr>
+<td>§2/§5: <code>TaskUpdater.update_status(state, msg, final=True)</code></td>
+<td><strong><code>final</code> was removed</strong> (v1 sig: <code>update_status(state, message, timestamp, metadata)</code>), and <code>TaskStatusUpdateEvent</code> has no <code>final</code> field. Use <strong><code>TaskUpdater.reject(message)</code></strong> for the reject path — it exists in both majors with the same signature, so no shim branch is needed.</td>
+</tr>
+<tr>
+<td>§5: <code>GuardedContext</code> base ctor is "the biggest risk"</td>
+<td><strong>Non-issue.</strong> <code>RequestContext.__init__</code> did change (v1 requires <code>call_context</code>; <code>request</code> is now <code>SendMessageRequest</code>), but <code>GuardedContext</code> already passes everything by keyword incl. <code>call_context</code>, and the <code>_params</code> instance attr exists in both majors. No change needed.</td>
+</tr>
+<tr>
+<td>§2: discriminate via <code>part.HasField("text")</code></td>
+<td>Correct for text. But <code>HasField("file")</code> <strong>raises</strong> — v1 <code>Part</code> has no <code>file</code> oneof member (its fields: <code>text, raw, url, data, filename, media_type</code>). File parts do not map 1:1 from 0.3.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="additions-sdk-changes-the-guide-didnt-cover">Additions — SDK changes the guide didn't cover<a class="headerlink" href="#additions-sdk-changes-the-guide-didnt-cover" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>MessageSendParams</code> → <code>SendMessageRequest</code>.</strong> v1 removed <code>MessageSendParams</code>;
+  <code>RequestContext(request=...)</code> now takes a <code>SendMessageRequest</code> (fields:
+  <code>tenant, message, configuration, metadata</code>). Any test/harness that builds a context
+  must branch on this.</li>
+<li><strong>Data-part construction.</strong> <code>Part(data={...})</code> fails on v1 — the <code>data</code> field is a
+  <code>google.protobuf.Value</code>, not a dict/Struct. Build via <code>Part(data=Value(struct_value=...))</code>
+  and read via <code>dict(part.data.struct_value)</code>.</li>
+<li><strong>Protobuf copy semantics.</strong> Assigning a sub-message (<code>SendMessageRequest(message=m)</code>)
+  <strong>copies</strong> it — there is no shared reference as on Pydantic 0.3. Identity assertions
+  (<code>x is original_msg</code>) that passed on 0.3 fail on protobuf; assert against the object the
+  context exposes (<code>ctx.message</code>) or on content, not on the external input object.</li>
+<li><strong><code>EventQueue()</code> construction deprecated on 1.x</strong> — see below.</li>
+<li><strong>v1 is real and stable</strong> — 1.0.0 … 1.1.2 are published; this migration is verified
+  against 1.1.2, not a pre-release.</li>
+</ul>
+<h3 id="eventqueue-direct-instantiation-deprecated-on-1x-owned-test-subclass"><code>EventQueue()</code> direct instantiation — deprecated on 1.x (owned test subclass)<a class="headerlink" href="#eventqueue-direct-instantiation-deprecated-on-1x-owned-test-subclass" title="Permanent link">&para;</a></h3>
+<p>v1 makes <code>a2a.server.events.EventQueue</code> an abstract producer interface. Constructing
+<code>EventQueue()</code> directly emits a <code>DeprecationWarning</code> and redirects to <code>EventQueueLegacy</code>;
+its docstring states <em>"executors should accept it and not construct one"</em> and warns that
+both the redirect and <code>EventQueueLegacy</code> "will be removed in a future release." It offers
+two sanctioned ways to run an executor outside the framework: <em>"write a custom subclass or
+use <code>EventQueueLegacy</code> (deprecated)."</em></p>
+<ul>
+<li><strong>Shipped Aegis is unaffected — permanently.</strong> Aegis is an executor <em>wrapper</em>: it accepts
+  the framework-provided <code>event_queue</code> and wraps it in <code>GuardedEventQueue</code>; it never
+  constructs an <code>EventQueue</code>. (<code>grep 'EventQueue(' src/</code> → none — only type annotations.)
+  No consumer hits this warning through aegis.</li>
+<li><strong>Only the test suite triggered it</strong>, because tests run an executor outside the framework
+  and need a real queue to feed <code>execute()</code> and read events back — exactly the deprecated
+  path.</li>
+<li><strong>Decision: own a concrete subclass in the shim.</strong> <code>tests/_a2a_compat.py::OwnedEventQueue</code>
+  is a ~15-line <code>EventQueue</code> subclass (the docstring's first sanctioned path). It implements
+  only what the suite exercises: the producer <code>enqueue_event</code>, the <code>close</code>/<code>is_closed</code> that
+  <code>GuardedEventQueue</code> delegates to the wrapped queue, and <code>dequeue_nowait</code> to read events back.
+  <code>event_queue()</code> returns it and <code>dequeue()</code> takes it, so the type checker enforces that only
+  this queue is drained, with no unchecked cast. This is warning-free <strong>and</strong> depends on
+  neither <code>EventQueueLegacy</code> (whose eventual removal would otherwise break test collection at
+  import time, even under the <code>a2a-sdk&lt;2</code> pin) nor any third-party queue internals. It works
+  unchanged on both majors (<code>EventQueue</code> exists in each), and replaces the earlier
+  <code>dequeue_event(no_wait=True)</code> branch the 0.3 drain path used. The ~100 <code>DeprecationWarning</code>s
+  are gone, not silenced with a <code>filterwarnings</code> ignore.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "content.code.annotate", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.expand", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

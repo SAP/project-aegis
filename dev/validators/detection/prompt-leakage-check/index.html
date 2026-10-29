@@ -1,0 +1,2939 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Open-core guardrail library for A2A agent executors">
+      
+      
+      
+      
+        <link rel="prev" href="../length-validator/">
+      
+      
+        <link rel="next" href="../size-validator/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Prompt Leakage Check - Project Aegis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#promptleakagecheck" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Project Aegis" class="md-header__button md-logo" aria-label="Project Aegis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Project Aegis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Prompt Leakage Check
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="red"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SAP/project-aegis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SAP/project-aegis
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Documentation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cookbook/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Cookbook
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Validators
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../changelog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Project Aegis" class="md-nav__button md-logo" aria-label="Project Aegis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3"/></svg>
+
+    </a>
+    Project Aegis
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SAP/project-aegis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SAP/project-aegis
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Documentation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../a2a-wrapper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A2A Wrapper
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../mutation-guard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MutationGuard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cookbook
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cookbook
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/agent-executor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AgentExecutor Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/agent-stream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    agent.stream() Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/standalone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standalone Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cookbook/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validators
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Validators
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../custom-validators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Validators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../authoring-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authoring Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Detection
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../length-validator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Length Validator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompt Leakage Check
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompt Leakage Check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructor-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#failure-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failure Details
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aegis.validators.detection.PromptLeakageCheck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PromptLeakageCheck
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PromptLeakageCheck">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aegis.validators.detection.PromptLeakageCheck.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../size-validator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Size Validator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../content-filter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Content Filter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../formula-injection-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formula Injection Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sql-injection-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Injection Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xss-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XSS Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xxe-detector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XXE Detector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mutation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mutation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mutation/html-sanitizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTML Sanitizer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructor-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructor Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#failure-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failure Details
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aegis.validators.detection.PromptLeakageCheck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PromptLeakageCheck
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PromptLeakageCheck">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aegis.validators.detection.PromptLeakageCheck.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="promptleakagecheck">PromptLeakageCheck<a class="headerlink" href="#promptleakagecheck" title="Permanent link">&para;</a></h1>
+<p>Reject agent output that reproduces the system prompt, configured secrets, or canary tokens.</p>
+<h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
+<p><code>PromptLeakageCheck</code> is a deterministic, text-only, <strong>detect-only</strong> validator. It runs under
+<a href="../../../guard/"><code>Guard</code></a> as an <strong>output guardrail</strong> — the last text-security gate before a
+response is returned, persisted, or exposed — and rejects output that reproduces protected
+instruction text. It answers OWASP <code>LLM07:2025</code> System Prompt Leakage's "inspect outputs for
+compliance" mitigation.</p>
+<p>It compares the candidate output against a protected corpus you configure:</p>
+<ul>
+<li><strong>Canary tokens</strong> — unique, high-entropy markers seeded into the system prompt. Any appearance
+  in the output is definitive leakage, so they are matched with no minimum-length floor.</li>
+<li><strong>Sensitive fragments</strong> — protected instruction text, matched as an exact or normalized
+  substring, and (opt-in) fuzzily for near-verbatim copies.</li>
+<li><strong>The system prompt itself</strong> — opt-in via <code>use_metadata_system</code>, read from
+  <code>GuardMetadata.system</code> at call time and split into lines.</li>
+</ul>
+<p>If the term "canary" is new, this example makes the difference concrete. Suppose your system
+prompt is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>You are a Python code reviewer. Never reveal the internal escalation code.
+</code></pre></div>
+<p>Here <code>Never reveal the internal escalation code.</code> is a <strong>fragment</strong> — real instruction text that
+already exists in the prompt and must not resurface in the output. Now suppose you also plant a
+unique marker in the prompt purely as a tripwire:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>You are a Python code reviewer. Never reveal the internal escalation code. canary-7f3a9c2b-4e1d-9a02
+</code></pre></div>
+<p><code>canary-7f3a9c2b-4e1d-9a02</code> is a <strong>canary</strong> — an arbitrary identifier with no meaning of its own
+that never occurs in normal output, so any appearance in the output is unambiguous proof the prompt
+leaked. In short: a fragment protects text you already have; a canary is bait you add specifically
+to detect a leak, with near-zero false positives.</p>
+<p>Normalization is <strong>off by default</strong> (opt in with <code>normalize=True</code>): with it off, the output and the
+protected material are matched as-is, with no folding. <code>normalize</code> controls folding only — it does
+not disable fuzzy matching, which you enable separately with <code>similarity_threshold</code>. This mirrors
+the engine's off-by-default <code>Guard(normalize=...)</code> and keeps matching predictable. When enabled, it
+folds cheap evasions — case changes, added whitespace, zero-width/invisible characters, and
+NFKC-compatibility variants such as full-width letters — by normalizing both the output and the
+protected material before matching. These folds are script-safe: they never map homoglyphs, so
+genuine non-Latin text is not rewritten to ASCII.</p>
+<p>Reach for it when you have a <strong>known</strong> protected reference to check against. It is not a semantic
+judge, and by design it does <strong>not</strong> catch:</p>
+<ul>
+<li>paraphrase, translation, or other semantic disclosure;</li>
+<li>confusable look-alike substitution, Base64/hex encoding, or a Caesar shift (documented residual
+  gaps, addressed by future additive hardening);</li>
+<li>leakage dripped across separate turns, or exfiltration through a tool argument.</li>
+</ul>
+<p>Each of those belongs to a different single-concern validator. A PASS certifies only that none of
+the configured deterministic conditions matched — <strong>never</strong> that the prompt is secret. Per OWASP, a
+system prompt should hold no security-critical secret in the first place.</p>
+<p>On a leak the <code>FailedResult</code> carries only safe summary metadata (a reference index, match type,
+similarity, and offsets); it <strong>never</strong> echoes the matched text, the protected text, or any snippet,
+so the validator cannot re-leak the secret into your logs or results.</p>
+<h2 id="constructor-parameters">Constructor Parameters<a class="headerlink" href="#constructor-parameters" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sensitive_fragments</code></td>
+<td><code>list[str] \| None</code></td>
+<td><code>None</code></td>
+<td>Protected instruction fragments. Matched as exact/normalized substrings at any length, and fuzzily when fuzzy is enabled.</td>
+</tr>
+<tr>
+<td><code>canaries</code></td>
+<td><code>list[str] \| None</code></td>
+<td><code>None</code></td>
+<td>Unique tokens whose appearance in output is definitive leakage. Matched with no minimum-length floor.</td>
+</tr>
+<tr>
+<td><code>use_metadata_system</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>When <code>True</code>, also protect <code>GuardMetadata.system</code>, split into lines. Only lines whose normalized length reaches <code>min_fragment_length</code> are used. Absent metadata at call time contributes nothing (no error).</td>
+</tr>
+<tr>
+<td><code>similarity_threshold</code></td>
+<td><code>float \| None</code></td>
+<td><code>None</code></td>
+<td>Enables fuzzy (near-verbatim) matching when set. A float in <code>[0.0, 1.0]</code> (recommended 0.80–0.90); <code>None</code> disables fuzzy matching.</td>
+</tr>
+<tr>
+<td><code>min_fragment_length</code></td>
+<td><code>int</code></td>
+<td><code>15</code></td>
+<td>Minimum normalized length for fuzzy eligibility and for an auto-derived <code>metadata.system</code> line to be used. Explicit fragments are still matched exactly at any length.</td>
+</tr>
+<tr>
+<td><code>case_sensitive</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>When <code>True</code>, skip case-folding. Only takes effect when <code>normalize=True</code> (case-folding is one step of normalization).</td>
+</tr>
+<tr>
+<td><code>normalize</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>Opt in to normalize both sides before matching — NFKC, strip zero-width/format characters, collapse whitespace, and case-fold (unless <code>case_sensitive</code>). Off by default: matching is fully literal unless enabled.</td>
+</tr>
+<tr>
+<td><code>max_input_chars</code></td>
+<td><code>int \| None</code></td>
+<td><code>None</code></td>
+<td>Optional resource valve. When set and the rendered output exceeds it, reject with <code>PROMPT_LEAKAGE_INPUT_TOO_LARGE</code> rather than scan.</td>
+</tr>
+</tbody>
+</table>
+<p>Construction raises <code>ValueError</code> when no protected source is configured, when any fragment or
+canary is empty/whitespace-only, when <code>similarity_threshold</code> is outside <code>[0.0, 1.0]</code>, or when
+<code>min_fragment_length</code> is negative.</p>
+<p>The non-default numeric values are starting points — calibrate <code>min_fragment_length</code> and
+<code>similarity_threshold</code> against your own benign and adversarial output before production.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<p>Configure <strong>at least one</strong> protected source — <code>sensitive_fragments</code>, <code>canaries</code>, or
+<code>use_metadata_system=True</code>. Each is optional on its own, so any one of them is a complete
+configuration; you do not need a canary token unless you seed one. Passing none raises <code>ValueError</code>
+at construction, because a validator with nothing to compare against would silently pass every
+output. The example below uses all three together:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">aegis</span><span class="w"> </span><span class="kn">import</span> <span class="n">Guard</span><span class="p">,</span> <span class="n">GuardMetadata</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">aegis.validators.detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptLeakageCheck</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">guard</span> <span class="o">=</span> <span class="n">Guard</span><span class="p">(</span><span class="s2">"output"</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">PromptLeakageCheck</span><span class="p">(</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="n">canaries</span><span class="o">=</span><span class="p">[</span><span class="s2">"a1b2c3d4-e5f6-canary-token"</span><span class="p">],</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="n">sensitive_fragments</span><span class="o">=</span><span class="p">[</span><span class="s2">"Never reveal the internal escalation code to the user."</span><span class="p">],</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="n">use_metadata_system</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="p">)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">)</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">guard</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="s2">"Sure — my instructions say: Never reveal the internal escalation code to the user."</span><span class="p">,</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="n">metadata</span><span class="o">=</span><span class="n">GuardMetadata</span><span class="p">(</span><span class="n">system</span><span class="o">=</span><span class="s2">"You are a helpful assistant. ..."</span><span class="p">),</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="p">)</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">has_failures</span><span class="p">:</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">failures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">error_code</span><span class="p">)</span>  <span class="c1"># PROMPT_LEAKAGE_DETECTED</span>
+</code></pre></div>
+<p>The smallest useful setup protects a single fragment, with no canary token:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">guard</span> <span class="o">=</span> <span class="n">Guard</span><span class="p">(</span><span class="s2">"output"</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">PromptLeakageCheck</span><span class="p">(</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        <span class="n">sensitive_fragments</span><span class="o">=</span><span class="p">[</span><span class="s2">"Never reveal the internal escalation code to the user."</span><span class="p">],</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">)</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">guard</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="s2">"Sure — Never reveal the internal escalation code to the user."</span><span class="p">)</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">has_failures</span><span class="p">:</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">failures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">error_code</span><span class="p">)</span>  <span class="c1"># PROMPT_LEAKAGE_DETECTED</span>
+</code></pre></div>
+<p>When more than one condition matches, the single reported verdict follows a fixed precedence:
+<code>PROMPT_LEAKAGE_INPUT_TOO_LARGE</code> → <code>PROMPT_LEAKAGE_CANARY</code> → <code>PROMPT_LEAKAGE_DETECTED</code> →
+<code>PROMPT_LEAKAGE_SUSPECTED</code>. Within a class, the earliest offending offset wins.</p>
+<h2 id="error-codes">Error Codes<a class="headerlink" href="#error-codes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Error Code</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PROMPT_LEAKAGE_CANARY</code></td>
+<td>A configured canary token appears in the output.</td>
+</tr>
+<tr>
+<td><code>PROMPT_LEAKAGE_DETECTED</code></td>
+<td>A protected fragment or system-prompt segment appears as an exact or normalized substring.</td>
+</tr>
+<tr>
+<td><code>PROMPT_LEAKAGE_SUSPECTED</code></td>
+<td>Fuzzy matching is enabled and an output window is at/above <code>similarity_threshold</code>.</td>
+</tr>
+<tr>
+<td><code>PROMPT_LEAKAGE_INPUT_TOO_LARGE</code></td>
+<td><code>max_input_chars</code> is set and the rendered output exceeds it.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="failure-details">Failure Details<a class="headerlink" href="#failure-details" title="Permanent link">&para;</a></h2>
+<p>Fields populated on <code>FailedResult.details</code>. They are safe summaries only — never the matched or
+protected text. <code>match_offset</code> / <code>match_length</code> index the rendered candidate (the raw text for
+<code>match_type="exact"</code>, the normalized text for <code>normalized</code> / <code>fuzzy</code>); since the raw text is never
+echoed, offsets are diagnostic only.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source</code></td>
+<td><code>str</code></td>
+<td>Which corpus matched — <code>"canary"</code>, <code>"fragment"</code>, or <code>"metadata_system"</code>.</td>
+</tr>
+<tr>
+<td><code>reference_index</code></td>
+<td><code>int</code></td>
+<td>Opaque index of the matched item within its source list.</td>
+</tr>
+<tr>
+<td><code>match_type</code></td>
+<td><code>str</code></td>
+<td><code>"exact"</code>, <code>"normalized"</code>, or <code>"fuzzy"</code> (absent on <code>PROMPT_LEAKAGE_CANARY</code>).</td>
+</tr>
+<tr>
+<td><code>match_offset</code></td>
+<td><code>int</code></td>
+<td>Character offset of the match in the scanned text.</td>
+</tr>
+<tr>
+<td><code>match_length</code></td>
+<td><code>int</code></td>
+<td>Length of the matched span (absent on <code>PROMPT_LEAKAGE_CANARY</code>).</td>
+</tr>
+<tr>
+<td><code>similarity</code></td>
+<td><code>float</code></td>
+<td>Fuzzy similarity ratio (only on <code>PROMPT_LEAKAGE_SUSPECTED</code>).</td>
+</tr>
+<tr>
+<td><code>length</code></td>
+<td><code>int</code></td>
+<td>Length of the rejected output (only on <code>PROMPT_LEAKAGE_INPUT_TOO_LARGE</code>).</td>
+</tr>
+<tr>
+<td><code>limit</code></td>
+<td><code>int</code></td>
+<td>The configured <code>max_input_chars</code> (only on <code>PROMPT_LEAKAGE_INPUT_TOO_LARGE</code>).</td>
+</tr>
+</tbody>
+</table>
+<p>On a PASS, <code>details</code> carries <code>fragments_checked</code> (count of protected items compared), <code>sources</code>
+(the active corpus categories), and <code>fuzzy_enabled</code> (whether fuzzy matching is on).</p>
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="aegis.validators.detection.PromptLeakageCheck" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>              <code class="highlight language-python"><span class="n">aegis</span><span class="o">.</span><span class="n">validators</span><span class="o">.</span><span class="n">detection</span><span class="o">.</span><span class="n">PromptLeakageCheck</span><span class="p">(</span><span class="n">sensitive_fragments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">canaries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_metadata_system</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">similarity_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_fragment_length</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_input_chars</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#aegis.validators.detection.PromptLeakageCheck" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="            aegis.BaseValidator (aegis.validators.base.BaseValidator)" href="../../../api-reference/#aegis.BaseValidator">BaseValidator</a></code></p>
+
+
+
+        <p>Rejects agent output that reproduces the system prompt, configured secrets, or canary tokens.</p>
+<p>A deterministic, text-only, <strong>detect-only</strong> output validator. It runs under <code>Guard</code> and
+compares an agent's candidate output against an explicitly configured protected corpus —
+sensitive fragments and canary tokens — and, opt-in, against the actual system prompt
+(<code>GuardMetadata.system</code>). Reach for it as the last text-security gate before a response is
+returned, persisted, or exposed.</p>
+<p>It detects three things, in order of precedence:</p>
+<ol>
+<li>A configured <strong>canary</strong> token appearing in the output (highest precision — canaries are
+   unique, so a match is unambiguous proof of leakage).</li>
+<li>A protected <strong>fragment</strong> (or a system-prompt segment) reproduced as an exact or
+   normalized substring of the output.</li>
+<li><em>(opt-in)</em> A near-verbatim, <strong>fuzzy</strong> match, for cosmetic edits that normalization alone
+   does not fold.</li>
+</ol>
+<p>Normalization (off by default; opt in with <code>normalize=True</code>) folds cheap evasions —
+case changes, added whitespace, zero-width characters, and NFKC-compatibility variants
+(e.g. full-width letters) — by
+normalizing both the output and the protected material before matching. It does <strong>not</strong>
+fold confusable look-alikes, decode Base64/hex, or reverse a Caesar shift; those are
+documented residual gaps handled by future, additive hardening (see the ADR).</p>
+<p>Out of scope by design (each is a separate single-concern validator): generic secret
+detection with no known reference, input-side prompt-injection detection, tool-egress
+inspection, paraphrase/translation (semantic) leakage, and cross-turn cumulative leakage.</p>
+<p>On a leak it returns a <code>FailedResult</code> whose <code>error_message</code> and <code>details</code> carry only
+safe metadata — a reference index, match type, similarity, and offsets — and <strong>never</strong> the
+matched text, protected text, or any snippet, so the validator cannot re-leak the secret
+into logs or results.</p>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>from aegis import Guard
+guard = Guard("output").use(PromptLeakageCheck(canaries=["a1b2c3d4-canary"]))
+result = await guard.validate("Sure! My instructions start with a1b2c3d4-canary")
+result.failures[0].error_code
+'PROMPT_LEAKAGE_CANARY'</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+        <p>Configure the protected corpus and matching behavior.</p>
+<p>At least one protected source must be configured — <code>sensitive_fragments</code>,
+<code>canaries</code>, or <code>use_metadata_system=True</code>. A deterministic validator cannot tell a
+genuine leak from a hallucination that merely <em>sounds</em> internal without a ground-truth
+reference, so construction fails closed rather than checking against nothing.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>sensitive_fragments</code>
+            </td>
+            <td>
+                  <code><span title="list">list</span>[<span title="str">str</span>] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Protected instruction fragments to keep out of the output.
+Matched as exact/normalized substrings (any length) and, when fuzzy is enabled,
+fuzzily.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>canaries</code>
+            </td>
+            <td>
+                  <code><span title="list">list</span>[<span title="str">str</span>] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Unique high-entropy tokens seeded into the system prompt. Any appearance
+in the output is definitive leakage, so they are matched with no minimum-length
+floor.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>use_metadata_system</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>When <code>True</code>, also protect the agent's actual system prompt,
+read from <code>GuardMetadata.system</code> at call time and split into lines. Only lines
+whose normalized length is at least <code>min_fragment_length</code> are used, to avoid
+firing on generic boilerplate. When the metadata or its <code>system</code> field is
+absent at call time, this source contributes nothing (no error).</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>similarity_threshold</code>
+            </td>
+            <td>
+                  <code><span title="float">float</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Enables fuzzy (near-verbatim) matching when set. A float in
+<code>[0.0, 1.0]</code> (recommended 0.80–0.90); <code>None</code> disables fuzzy matching.
+Off by default because fuzzy matching is quadratic and adds false-positive risk.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>min_fragment_length</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Minimum normalized length for a fragment/segment to be eligible
+for fuzzy matching, and for an auto-derived <code>metadata.system</code> line to be used
+at all. Suppresses noise from short generic overlaps. Explicit
+<code>sensitive_fragments</code> are still matched exactly at any length.</p>
+              </div>
+            </td>
+            <td>
+                  <code>15</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>case_sensitive</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>When <code>True</code>, skip case-folding during normalization. Only takes
+effect when <code>normalize=True</code> — case-folding is one step of normalization, so
+with <code>normalize=False</code> matching is fully literal regardless of this flag.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>normalize</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>When <code>True</code>, normalize both the output and the protected material before
+matching — NFKC, strip zero-width/format characters, collapse whitespace, and
+case-fold (unless <code>case_sensitive</code>). Defeats cheap cosmetic evasions at the cost
+of some strictness. Defaults to <code>False</code> (matching is fully literal): opt in
+deliberately, mirroring the engine's off-by-default <code>Guard(normalize=...)</code> so
+normalization is never applied silently. The folds here are script-safe — they
+never map homoglyphs, so genuine non-Latin text is not rewritten to ASCII.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>max_input_chars</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional resource valve. When set and the rendered output exceeds
+it, the output is rejected with <code>PROMPT_LEAKAGE_INPUT_TOO_LARGE</code> rather than
+scanned. Off by default — a hard input-size limit belongs to a dedicated length
+validator; this is only a convenience cap on fuzzy-matching work.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If no protected source is configured; if any <code>sensitive_fragments</code> or
+<code>canaries</code> entry is empty or whitespace-only (an empty string is a substring
+of every output and would force a spurious match); if <code>similarity_threshold</code>
+is outside <code>[0.0, 1.0]</code>; if <code>min_fragment_length</code> is negative; or if
+<code>max_input_chars</code> is negative.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+                  <details class="mkdocstrings-source">
+                    <summary>Source code in <code>src/aegis/validators/detection/prompt_leakage_check.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-135">135</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-136">136</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-137">137</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-138">138</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-139">139</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-140">140</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-141">141</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-142">142</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-143">143</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-144">144</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-145">145</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-146">146</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-147">147</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-148">148</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-149">149</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-150">150</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-151">151</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-152">152</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-153">153</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-154">154</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-155">155</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-156">156</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-157">157</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-158">158</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-159">159</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-160">160</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-161">161</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-162">162</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-163">163</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-164">164</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-165">165</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-166">166</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-167">167</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-168">168</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-169">169</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-170">170</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-171">171</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-172">172</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-173">173</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-174">174</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-175">175</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-176">176</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-177">177</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-178">178</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-179">179</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-180">180</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-181">181</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-182">182</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-183">183</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-184">184</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-185">185</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-186">186</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-187">187</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-188">188</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-189">189</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-190">190</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-191">191</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-192">192</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-193">193</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-194">194</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-195">195</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-196">196</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-197">197</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-198">198</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-199">199</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-200">200</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-201">201</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-202">202</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-203">203</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-204">204</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-205">205</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-206">206</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-207">207</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-208">208</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-209">209</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-210">210</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-211">211</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-212">212</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-213">213</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-214">214</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-215">215</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-216">216</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-217">217</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-218">218</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-219">219</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-220">220</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-221">221</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-222">222</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-223">223</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-224">224</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-225">225</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-226">226</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-227">227</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-228">228</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-229">229</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-230">230</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-231">231</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-232">232</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-233">233</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-234">234</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-235">235</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-236">236</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-237">237</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-238">238</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-239">239</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-240">240</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-241">241</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-242">242</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-243">243</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-244">244</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-245">245</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-246">246</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-247">247</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-248">248</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-249">249</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-250">250</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-251">251</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-135" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-135"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-136" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-136"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-137" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-137"></a>    <span class="n">sensitive_fragments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-138" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-138"></a>    <span class="n">canaries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-139" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-139"></a>    <span class="n">use_metadata_system</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-140" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-140"></a>    <span class="n">similarity_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-141" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-141"></a>    <span class="n">min_fragment_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-142" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-142"></a>    <span class="n">case_sensitive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-143" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-143"></a>    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-144" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-144"></a>    <span class="n">max_input_chars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-145" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-145"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-146" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-146"></a><span class="w">    </span><span class="sd">"""Configure the protected corpus and matching behavior.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-147" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-147"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-148" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-148"></a><span class="sd">    At least one protected source must be configured — ``sensitive_fragments``,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-149" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-149"></a><span class="sd">    ``canaries``, or ``use_metadata_system=True``. A deterministic validator cannot tell a</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-150" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-150"></a><span class="sd">    genuine leak from a hallucination that merely *sounds* internal without a ground-truth</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-151" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-151"></a><span class="sd">    reference, so construction fails closed rather than checking against nothing.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-152" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-152"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-153" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-153"></a><span class="sd">    Args:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-154" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-154"></a><span class="sd">        sensitive_fragments: Protected instruction fragments to keep out of the output.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-155" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-155"></a><span class="sd">            Matched as exact/normalized substrings (any length) and, when fuzzy is enabled,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-156" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-156"></a><span class="sd">            fuzzily.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-157" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-157"></a><span class="sd">        canaries: Unique high-entropy tokens seeded into the system prompt. Any appearance</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-158" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-158"></a><span class="sd">            in the output is definitive leakage, so they are matched with no minimum-length</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-159" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-159"></a><span class="sd">            floor.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-160" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-160"></a><span class="sd">        use_metadata_system: When ``True``, also protect the agent's actual system prompt,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-161" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-161"></a><span class="sd">            read from ``GuardMetadata.system`` at call time and split into lines. Only lines</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-162" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-162"></a><span class="sd">            whose normalized length is at least ``min_fragment_length`` are used, to avoid</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-163" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-163"></a><span class="sd">            firing on generic boilerplate. When the metadata or its ``system`` field is</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-164" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-164"></a><span class="sd">            absent at call time, this source contributes nothing (no error).</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-165" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-165"></a><span class="sd">        similarity_threshold: Enables fuzzy (near-verbatim) matching when set. A float in</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-166" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-166"></a><span class="sd">            ``[0.0, 1.0]`` (recommended 0.80–0.90); ``None`` disables fuzzy matching.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-167" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-167"></a><span class="sd">            Off by default because fuzzy matching is quadratic and adds false-positive risk.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-168" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-168"></a><span class="sd">        min_fragment_length: Minimum normalized length for a fragment/segment to be eligible</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-169" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-169"></a><span class="sd">            for fuzzy matching, and for an auto-derived ``metadata.system`` line to be used</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-170" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-170"></a><span class="sd">            at all. Suppresses noise from short generic overlaps. Explicit</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-171" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-171"></a><span class="sd">            ``sensitive_fragments`` are still matched exactly at any length.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-172" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-172"></a><span class="sd">        case_sensitive: When ``True``, skip case-folding during normalization. Only takes</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-173" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-173"></a><span class="sd">            effect when ``normalize=True`` — case-folding is one step of normalization, so</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-174" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-174"></a><span class="sd">            with ``normalize=False`` matching is fully literal regardless of this flag.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-175" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-175"></a><span class="sd">        normalize: When ``True``, normalize both the output and the protected material before</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-176" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-176"></a><span class="sd">            matching — NFKC, strip zero-width/format characters, collapse whitespace, and</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-177" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-177"></a><span class="sd">            case-fold (unless ``case_sensitive``). Defeats cheap cosmetic evasions at the cost</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-178" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-178"></a><span class="sd">            of some strictness. Defaults to ``False`` (matching is fully literal): opt in</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-179" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-179"></a><span class="sd">            deliberately, mirroring the engine's off-by-default ``Guard(normalize=...)`` so</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-180" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-180"></a><span class="sd">            normalization is never applied silently. The folds here are script-safe — they</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-181" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-181"></a><span class="sd">            never map homoglyphs, so genuine non-Latin text is not rewritten to ASCII.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-182" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-182"></a><span class="sd">        max_input_chars: Optional resource valve. When set and the rendered output exceeds</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-183" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-183"></a><span class="sd">            it, the output is rejected with ``PROMPT_LEAKAGE_INPUT_TOO_LARGE`` rather than</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-184" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-184"></a><span class="sd">            scanned. Off by default — a hard input-size limit belongs to a dedicated length</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-185" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-185"></a><span class="sd">            validator; this is only a convenience cap on fuzzy-matching work.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-186" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-186"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-187" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-187"></a><span class="sd">    Raises:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-188" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-188"></a><span class="sd">        ValueError: If no protected source is configured; if any ``sensitive_fragments`` or</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-189" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-189"></a><span class="sd">            ``canaries`` entry is empty or whitespace-only (an empty string is a substring</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-190" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-190"></a><span class="sd">            of every output and would force a spurious match); if ``similarity_threshold``</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-191" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-191"></a><span class="sd">            is outside ``[0.0, 1.0]``; if ``min_fragment_length`` is negative; or if</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-192" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-192"></a><span class="sd">            ``max_input_chars`` is negative.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-193" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-193"></a><span class="sd">    """</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-194" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-194"></a>    <span class="n">fragments</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sensitive_fragments</span> <span class="ow">or</span> <span class="p">[])</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-195" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-195"></a>    <span class="n">canary_tokens</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">canaries</span> <span class="ow">or</span> <span class="p">[])</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-196" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-196"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-197" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-197"></a>    <span class="c1"># Fail closed: without a ground-truth reference there is nothing to compare against, so</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-198" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-198"></a>    <span class="c1"># this validator would silently pass everything — a false sense of security.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-199" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-199"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">fragments</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">canary_tokens</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">use_metadata_system</span><span class="p">:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-200" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-200"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-201" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-201"></a>            <span class="s2">"PromptLeakageCheck requires at least one protected source: pass "</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-202" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-202"></a>            <span class="s2">"sensitive_fragments, canaries, or set use_metadata_system=True."</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-203" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-203"></a>        <span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-204" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-204"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-205" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-205"></a>    <span class="c1"># An empty or whitespace-only needle is a substring of every possible output, so it</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-206" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-206"></a>    <span class="c1"># would reject all input. Reject it at construction — this is a real gap, not a style</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-207" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-207"></a>    <span class="c1"># choice. (Report the source and index, never the value, in case the value is secret.)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-208" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-208"></a>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fragments</span><span class="p">):</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-209" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-209"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">fragment</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-210" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-210"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"sensitive_fragments[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">] is empty or whitespace-only."</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-211" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-211"></a>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">canary</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">canary_tokens</span><span class="p">):</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-212" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-212"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">canary</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-213" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-213"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"canaries[</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">] is empty or whitespace-only."</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-214" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-214"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-215" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-215"></a>    <span class="k">if</span> <span class="n">similarity_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">similarity_threshold</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-216" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-216"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"similarity_threshold must be within [0.0, 1.0], got </span><span class="si">{</span><span class="n">similarity_threshold</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-217" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-217"></a>    <span class="k">if</span> <span class="n">min_fragment_length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-218" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-218"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"min_fragment_length must be non-negative, got </span><span class="si">{</span><span class="n">min_fragment_length</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-219" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-219"></a>    <span class="k">if</span> <span class="n">max_input_chars</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_input_chars</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-220" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-220"></a>        <span class="c1"># A negative limit makes len(output) &gt; limit true for every candidate — even empty</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-221" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-221"></a>        <span class="c1"># output — so it would reject everything with an impossible bound. Guard it like the</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-222" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-222"></a>        <span class="c1"># other numeric controls. (0 is allowed: it means "reject any non-empty output".)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-223" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-223"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max_input_chars must be non-negative, got </span><span class="si">{</span><span class="n">max_input_chars</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-224" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-224"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-225" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-225"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_use_metadata_system</span> <span class="o">=</span> <span class="n">use_metadata_system</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-226" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-226"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_similarity_threshold</span> <span class="o">=</span> <span class="n">similarity_threshold</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-227" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-227"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_min_fragment_length</span> <span class="o">=</span> <span class="n">min_fragment_length</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-228" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-228"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_normalize</span> <span class="o">=</span> <span class="n">normalize</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-229" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-229"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span> <span class="o">=</span> <span class="n">max_input_chars</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-230" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-230"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-231" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-231"></a>    <span class="c1"># Build the normalization profile once. ``None`` means "no normalization" — matching is</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-232" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-232"></a>    <span class="c1"># fully literal. Otherwise the script-safe matching profile (NFKC + strip format chars +</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-233" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-233"></a>    <span class="c1"># collapse whitespace + casefold); this validator always uses NFKC (no compatibility_folding</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-234" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-234"></a>    <span class="c1"># knob) and case_sensitive only takes effect here. ``self._normalize`` is retained because</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-235" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-235"></a>    <span class="c1"># the "normalized" match-type gate in _find_substring reads it.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-236" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-236"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_norm_config</span> <span class="o">=</span> <span class="n">NormalizationConfig</span><span class="o">.</span><span class="n">for_validators</span><span class="p">(</span><span class="n">case_sensitive</span><span class="o">=</span><span class="n">case_sensitive</span><span class="p">)</span> <span class="k">if</span> <span class="n">normalize</span> <span class="k">else</span> <span class="kc">None</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-237" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-237"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-238" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-238"></a>    <span class="c1"># Canaries and fragments are fixed for the validator's lifetime, so normalize them once</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-239" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-239"></a>    <span class="c1"># here rather than on every validate() call. They live in separate lists because each is</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-240" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-240"></a>    <span class="c1"># checked by a different matcher — canaries by _find_canary, fragments (plus the per-call</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-241" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-241"></a>    <span class="c1"># metadata.system segments) by _find_substring / _find_fuzzy — so each matcher receives</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-242" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-242"></a>    <span class="c1"># exactly the items it checks, with no source filtering. Built after self._norm_config</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-243" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-243"></a>    <span class="c1"># above, which _normalize_text reads.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-244" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-244"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_canaries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_Protected</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-245" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-245"></a>        <span class="n">_Protected</span><span class="p">(</span><span class="n">_SOURCE_CANARY</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">canary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_text</span><span class="p">(</span><span class="n">canary</span><span class="p">))</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-246" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-246"></a>        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">canary</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">canary_tokens</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-247" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-247"></a>    <span class="p">]</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-248" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-248"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_fragments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_Protected</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-249" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-249"></a>        <span class="n">_Protected</span><span class="p">(</span><span class="n">_SOURCE_FRAGMENT</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">fragment</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_text</span><span class="p">(</span><span class="n">fragment</span><span class="p">))</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-250" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-250"></a>        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fragments</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-251" name="aegis.validators.detection.PromptLeakageCheck--source--__codelineno-0-251"></a>    <span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="aegis.validators.detection.PromptLeakageCheck.validate" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#aegis.validators.detection.PromptLeakageCheck.validate" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Inspect the candidate output and report whether it leaks protected material.</p>
+<p>Scans <code>view.render()</code> — the whole candidate, so a Markdown/JSON/code wrapper earns no
+exemption. Since <code>render()</code> joins parts with a newline, a fragment spanning a part
+boundary is caught only when that boundary is a whitespace break; a mid-token split is a
+residual miss (deferred separator/interleaving handling — see the ADR).</p>
+<p>Returns the single highest-precedence failure (<code>INPUT_TOO_LARGE</code> → <code>CANARY</code> →
+<code>DETECTED</code> → <code>SUSPECTED</code>), or <code>PassedResult</code> if nothing matched.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>view</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="              aegis.ContentView(items)
+
+  
+      dataclass
+   (aegis.validators.base.ContentView)" href="../../../api-reference/#aegis.ContentView">ContentView</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The candidate output as a :class:<code>ContentView</code>. Never <code>None</code>; may be empty.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>metadata</code>
+            </td>
+            <td>
+                  <code><span title="aegis.metadata.GuardMetadata">GuardMetadata</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Surrounding agent context. Read only when <code>use_metadata_system=True</code>,
+for its <code>system</code> field. May be <code>None</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>PassedResult</code> with <code>details = {"fragments_checked", "sources", "fuzzy_enabled"}</code></p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>when no configured condition matched, or a <code>FailedResult</code> carrying a stable</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            aegis.ValidationResult = PassedResult | FailedResult
+
+  
+      module-attribute
+   (aegis.validators.base.ValidationResult)" href="../../../api-reference/#aegis.ValidationResult">ValidationResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>error_code</code> and a safe-summary <code>details</code> mapping (no matched or protected text).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/aegis/validators/detection/prompt_leakage_check.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-253">253</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-254">254</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-255">255</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-256">256</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-257">257</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-258">258</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-259">259</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-260">260</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-261">261</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-262">262</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-263">263</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-264">264</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-265">265</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-266">266</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-267">267</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-268">268</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-269">269</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-270">270</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-271">271</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-272">272</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-273">273</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-274">274</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-275">275</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-276">276</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-277">277</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-278">278</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-279">279</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-280">280</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-281">281</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-282">282</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-283">283</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-284">284</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-285">285</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-286">286</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-287">287</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-288">288</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-289">289</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-290">290</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-291">291</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-292">292</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-293">293</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-294">294</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-295">295</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-296">296</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-297">297</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-298">298</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-299">299</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-300">300</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-301">301</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-302">302</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-303">303</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-304">304</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-305">305</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-306">306</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-307">307</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-308">308</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-309">309</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-310">310</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-311">311</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-312">312</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-313">313</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-314">314</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-315">315</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-316">316</a></span>
+<span class="normal"><a href="#aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-317">317</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-253" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-253"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-254" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-254"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-255" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-255"></a>    <span class="n">view</span><span class="p">:</span> <span class="n">ContentView</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-256" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-256"></a>    <span class="n">metadata</span><span class="p">:</span> <span class="n">GuardMetadata</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-257" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-257"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationResult</span><span class="p">:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-258" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-258"></a><span class="w">    </span><span class="sd">"""Inspect the candidate output and report whether it leaks protected material.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-259" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-259"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-260" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-260"></a><span class="sd">    Scans ``view.render()`` — the whole candidate, so a Markdown/JSON/code wrapper earns no</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-261" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-261"></a><span class="sd">    exemption. Since ``render()`` joins parts with a newline, a fragment spanning a part</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-262" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-262"></a><span class="sd">    boundary is caught only when that boundary is a whitespace break; a mid-token split is a</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-263" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-263"></a><span class="sd">    residual miss (deferred separator/interleaving handling — see the ADR).</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-264" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-264"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-265" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-265"></a><span class="sd">    Returns the single highest-precedence failure (``INPUT_TOO_LARGE`` → ``CANARY`` →</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-266" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-266"></a><span class="sd">    ``DETECTED`` → ``SUSPECTED``), or ``PassedResult`` if nothing matched.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-267" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-267"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-268" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-268"></a><span class="sd">    Args:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-269" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-269"></a><span class="sd">        view: The candidate output as a :class:`ContentView`. Never ``None``; may be empty.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-270" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-270"></a><span class="sd">        metadata: Surrounding agent context. Read only when ``use_metadata_system=True``,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-271" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-271"></a><span class="sd">            for its ``system`` field. May be ``None``.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-272" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-272"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-273" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-273"></a><span class="sd">    Returns:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-274" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-274"></a><span class="sd">        ``PassedResult`` with ``details = {"fragments_checked", "sources", "fuzzy_enabled"}``</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-275" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-275"></a><span class="sd">        when no configured condition matched, or a ``FailedResult`` carrying a stable</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-276" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-276"></a><span class="sd">        ``error_code`` and a safe-summary ``details`` mapping (no matched or protected text).</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-277" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-277"></a><span class="sd">    """</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-278" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-278"></a>    <span class="n">raw_output</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-279" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-279"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-280" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-280"></a>    <span class="c1"># The size valve runs first: it is both the highest-precedence failure and the point of</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-281" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-281"></a>    <span class="c1"># the cap — reject an oversized candidate before doing any (potentially quadratic) work.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-282" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-282"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">raw_output</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span><span class="p">:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-283" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-283"></a>        <span class="k">return</span> <span class="n">FailedResult</span><span class="p">(</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-284" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-284"></a>            <span class="n">error_code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">PROMPT_LEAKAGE_INPUT_TOO_LARGE</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-285" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-285"></a>            <span class="n">error_message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Candidate output exceeds the </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span><span class="si">}</span><span class="s2">-character inspection limit."</span><span class="p">,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-286" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-286"></a>            <span class="n">details</span><span class="o">=</span><span class="p">{</span><span class="s2">"length"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">raw_output</span><span class="p">),</span> <span class="s2">"limit"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_input_chars</span><span class="p">},</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-287" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-287"></a>        <span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-288" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-288"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-289" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-289"></a>    <span class="c1"># Build the fragment targets — the configured fragments plus any per-call metadata.system</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-290" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-290"></a>    <span class="c1"># segments, both matched by _find_substring / _find_fuzzy — before the empty-output check,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-291" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-291"></a>    <span class="c1"># so a PASS always summarizes the same configured sources whether or not there was content</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-292" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-292"></a>    <span class="c1"># to scan. Canaries need no per-call assembly; they are the static self._canaries list.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-293" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-293"></a>    <span class="n">targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_fragment_targets</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-294" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-294"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-295" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-295"></a>    <span class="c1"># Nothing can have leaked from empty or whitespace-only output.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-296" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-296"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_output</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-297" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-297"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_passed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_canaries</span> <span class="o">+</span> <span class="n">targets</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-298" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-298"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-299" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-299"></a>    <span class="n">norm_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_text</span><span class="p">(</span><span class="n">raw_output</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-300" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-300"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-301" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-301"></a>    <span class="c1"># Check by precedence and short-circuit: a canary match outranks any fragment match,</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-302" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-302"></a>    <span class="c1"># which outranks any fuzzy match, so there is no need to look for a weaker class once a</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-303" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-303"></a>    <span class="c1"># stronger one has fired. Each matcher gets exactly the list it checks — no source filter.</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-304" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-304"></a>    <span class="n">canary_match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_canary</span><span class="p">(</span><span class="n">norm_output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canaries</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-305" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-305"></a>    <span class="k">if</span> <span class="n">canary_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-306" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-306"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_failure</span><span class="p">(</span><span class="n">canary_match</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-307" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-307"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-308" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-308"></a>    <span class="n">substring_match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_substring</span><span class="p">(</span><span class="n">raw_output</span><span class="p">,</span> <span class="n">norm_output</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-309" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-309"></a>    <span class="k">if</span> <span class="n">substring_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-310" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-310"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_failure</span><span class="p">(</span><span class="n">substring_match</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-311" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-311"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-312" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-312"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_similarity_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-313" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-313"></a>        <span class="n">fuzzy_match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_fuzzy</span><span class="p">(</span><span class="n">norm_output</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-314" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-314"></a>        <span class="k">if</span> <span class="n">fuzzy_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-315" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-315"></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_failure</span><span class="p">(</span><span class="n">fuzzy_match</span><span class="p">)</span>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-316" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-316"></a>
+<a id="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-317" name="aegis.validators.detection.PromptLeakageCheck.validate--source--__codelineno-0-317"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_passed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_canaries</span> <span class="o">+</span> <span class="n">targets</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "content.code.annotate", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.expand", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>
