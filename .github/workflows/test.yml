@@ -1,0 +1,77 @@
+name: Tests
+
+# Runs the pytest suite with coverage. Two legs cover both supported a2a-sdk
+# majors so the version-agnostic test helper (tests/_a2a_compat.py) is exercised
+# against each, and the compat shim can't silently break on one of them.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions: {}
+
+jobs:
+  test:
+    name: pytest (a2a-sdk 1.x)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        # Pin to a full commit SHA, not a moving tag: a tag can be repointed to
+        # new code that would then run in CI, so pinning freezes exactly what
+        # runs. The trailing comment records the human-readable version.
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+
+      - name: Install dev dependencies
+        # --locked asserts uv.lock is in sync with pyproject.toml and fails if it
+        # has drifted, so CI installs the exact resolution that was committed.
+        run: uv sync --locked --extra dev
+
+      - name: Run tests with coverage
+        # Terminal coverage summary (term-missing) rather than an XML report,
+        # since nothing in CI consumes a coverage file.
+        run: uv run pytest --cov=aegis --cov-report=term-missing
+
+  # Covers the older supported a2a-sdk major so the compat shim can't silently
+  # break on the 0.3 side. Delete once no consumer pins a2a-sdk <1.0.
+  test-a2a-v0-3:
+    name: pytest (a2a-sdk 0.3.x)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        # SHA-pinned for the same reason as the a2a-sdk 1.x job above.
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+
+      - name: Install dev dependencies
+        # --locked asserts uv.lock is in sync with pyproject.toml and fails if it
+        # has drifted, so CI installs the exact resolution that was committed.
+        run: uv sync --locked --extra dev
+
+      - name: Pin a2a-sdk to 0.3.x
+        run: uv pip install "a2a-sdk==0.3.20"
+
+      - name: Pytest
+        # --no-sync so uv does not re-resolve and undo the 0.3.x pin above.
+        run: uv run --no-sync pytest -q

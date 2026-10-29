@@ -1,6 +1,6 @@
 name: Lint & Type Check
 
-# Enforcing gate — Ruff format, Ruff lint, and pyright must pass on every
+# Enforcing gate: Ruff format, Ruff lint, and pyright must pass on every
 # push/PR. Scoped to src/tests/scripts (all first-party Python), matching the
 # pre-commit hooks. Docs markdown code blocks are not gated here.
 
@@ -21,21 +21,25 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.13'
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        # Pin to a full commit SHA, not a moving tag: a tag can be repointed to
+        # new code that would then run in CI, so pinning freezes exactly what
+        # runs. The trailing comment records the human-readable version.
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
 
       - name: Install dev dependencies
-        # --extra dev pulls ruff + pyright (and pytest) from pyproject.toml.
-        # This repo builds the package itself, so deps resolve from public PyPI — no internal
-        # index credentials needed (unlike downstream consumers).
-        run: uv sync --extra dev
+        # --extra dev pulls ruff + pyright (and pytest) from pyproject.toml; all
+        # dependencies resolve from public PyPI. --locked asserts uv.lock is in
+        # sync with pyproject.toml and fails if it has drifted, so CI runs the
+        # exact resolution that was committed and reviewed.
+        run: uv sync --locked --extra dev
 
       - name: Ruff format check
         run: uv run ruff format --check src tests scripts

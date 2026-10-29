@@ -1,0 +1,54 @@
+name: CodeQL
+
+# Native GitHub CodeQL code scanning. Because this workflow file defines the
+# scan, the repo uses code scanning's "advanced setup": the repo setting must
+# be Advanced, not Default, or CodeQL result uploads are rejected.
+#
+# Two languages: `python` (the package) and `actions` (lints the workflow files
+# themselves for CI security issues). Both are no-build, so build-mode: none.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '40 22 * * 0'   # weekly (Sun 22:40 UTC) so new CodeQL rules re-scan existing code
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write   # upload results to the Security tab
+      contents: read
+      actions: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: python
+            build-mode: none
+          - language: actions
+            build-mode: none
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"
