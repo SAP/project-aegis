@@ -1,0 +1,33 @@
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+test-results.xml
+
+# Environments
+.venv/
+venv/
+.env
+
+# Docs build
+site/
+
+# Tooling caches
+.ruff_cache/
+.mypy_cache/
+
+# OS
+.DS_Store
+
+# Benchmark generated data
+benchmark/input_sanitization/data/generated/
+benchmark/input_sanitization/data/raw/

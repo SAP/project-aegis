@@ -1,0 +1,108 @@
+site_name: Project Aegis
+site_description: Open-core guardrail library for A2A agent executors
+repo_url: https://github.com/SAP/project-aegis
+repo_name: SAP/project-aegis
+
+extra:
+  version:
+    provider: mike
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: red
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: red
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/shield-lock
+  features:
+    - content.code.copy
+    - content.code.annotate
+    - navigation.instant
+    - navigation.sections
+    - navigation.tabs
+    - navigation.expand
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
+            show_symbol_type_heading: true
+            members_order: source
+            docstring_style: google
+            merge_init_into_class: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+  - attr_list
+  - tables
+  - md_in_html
+
+nav:
+  - Home: index.md
+  - Documentation:
+    - Getting Started: getting-started.md
+    - Installation: installation.md
+    - A2A Wrapper: a2a-wrapper.md
+    - Guard: guard.md
+    - MutationGuard: mutation-guard.md
+  - Cookbook:
+    - Overview: cookbook.md
+    - AgentExecutor Integration: cookbook/agent-executor.md
+    - agent.stream() Integration: cookbook/agent-stream.md
+    - Standalone Usage: cookbook/standalone.md
+    - Observability: cookbook/observability.md
+  - Architecture:
+    - Overview: architecture.md
+  - Validators:
+    - Overview: validators/index.md
+    - Custom Validators: custom-validators.md
+    - Authoring Guide: validators/authoring-guide.md
+    - Detection:
+      - Length Validator: validators/detection/length-validator.md
+      - Prompt Leakage Check: validators/detection/prompt-leakage-check.md
+      - Size Validator: validators/detection/size-validator.md
+      - Content Filter: validators/detection/content-filter.md
+      - Formula Injection Detector: validators/detection/formula-injection-detector.md
+      - SQL Injection Detector: validators/detection/sql-injection-detector.md
+      - XSS Detector: validators/detection/xss-detector.md
+      - XXE Detector: validators/detection/xxe-detector.md
+    - Mutation:
+      - HTML Sanitizer: validators/mutation/html-sanitizer.md
+  - API Reference: api-reference.md
+  - Changelog: changelog.md
