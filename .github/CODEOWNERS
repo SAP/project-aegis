@@ -1,0 +1,12 @@
+# CODEOWNERS — reviews are auto-requested from the owning team for changed paths.
+# Rules evaluated top to bottom; the LAST matching pattern wins.
+# The owning team must have write access for its review to count.
+
+# Default owner (fallback for anything not matched below)
+*                               @SAP/project-aegis-team
+
+# Core package, docs, A2A integration, and the shared validator contract
+/src/aegis/                     @SAP/project-aegis-team
+/docs/                          @SAP/project-aegis-team
+/src/aegis/a2a/                 @SAP/project-aegis-team
+/src/aegis/validators/base.py  @SAP/project-aegis-team
