@@ -5,6 +5,8 @@
 
 version: 2
 updates:
+  # "uv" (not "pip") so Dependabot maintains uv.lock, the project's lockfile.
+  # The pip ecosystem does not understand uv.lock and would leave it to go stale.
   - package-ecosystem: "uv"
     directory: "/"
     schedule:
@@ -14,4 +16,3 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-

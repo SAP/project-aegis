@@ -9,3 +9,18 @@ path = "**"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 SAP SE or an SAP affiliate company and project-aegis contributors"
 SPDX-License-Identifier = "Apache-2.0"
+
+# Third-party vendored Unicode data: NOT SAP-owned, NOT Apache-2.0.
+# Must come AFTER the "**" block: when multiple [[annotations]] match a file,
+# the last matching entry wins, so these two paths resolve here instead of to
+# the Apache-2.0 block above. `reuse lint` passes either way, so this
+# attribution has to be set deliberately (the "**" glob would silently
+# mis-label these as Apache-2.0 / SAP).
+[[annotations]]
+path = [
+    "dev/data/unicode/confusables-17.0.0.txt",
+    "src/aegis/_normalize/_generated.py",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2025 Unicode, Inc."
+SPDX-License-Identifier = "Unicode-3.0"

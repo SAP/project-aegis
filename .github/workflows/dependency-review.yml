@@ -1,0 +1,37 @@
+name: Dependency Review
+
+# Scans dependency changes on PRs for known vulnerabilities and disallowed
+# licenses. Runs on pull_request only (it diffs the PR against the base) and
+# needs the repo dependency graph, which is on by default for public repos.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions: {}
+
+jobs:
+  dependency-review:
+    name: Dependency review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v5
+        with:
+          fail-on-severity: high
+          # This project is Apache-2.0, so block dependencies under strong
+          # copyleft (GPL/AGPL) and CC share-alike, which are incompatible with
+          # it. Weak copyleft (MPL/EPL/CDDL/LGPL) is allowed as a dependency, so
+          # it is not listed. License detection can false-positive. If a
+          # legitimate dependency is flagged, confirm its real license and
+          # adjust this list.
+          deny-licenses: >-
+            GPL-2.0-only, GPL-2.0-or-later,
+            GPL-3.0-only, GPL-3.0-or-later,
+            AGPL-3.0-only, AGPL-3.0-or-later,
+            CC-BY-SA-4.0, CC-BY-SA-3.0, CC-BY-SA-2.0, CC-SA-1.0

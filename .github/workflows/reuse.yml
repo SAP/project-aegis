@@ -1,0 +1,29 @@
+name: REUSE Compliance
+
+# Enforces REUSE / SPDX licensing compliance on every push and PR, backing the
+# REUSE badge in README.md. Config lives in REUSE.toml + LICENSES/ (already in
+# the repo), so no inputs needed here.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions: {}
+
+jobs:
+  reuse:
+    name: REUSE lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: REUSE compliance check
+        # Pin to a full commit SHA, not a moving tag: a tag can be repointed to
+        # new code that would then run in CI. v6 ships the reuse tool 3.x.
+        uses: fsfe/reuse-action@676e2d560c9a403aa252096d99fcab3e1132b0f5  # v6.0.0
