@@ -1,0 +1,42 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "src/**"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: pip install mkdocs-material "mkdocstrings[python]" mike
+
+      - name: Configure git for mike push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin gh-pages --depth=1
+
+      - name: Deploy dev docs
+        run: mike deploy --push dev
+
+      - name: Keep latest as default docs version
+        run: |
+          if mike list | awk '/\[[^]]*latest[^]]*\]/ { found = 1 } END { exit found ? 0 : 1 }'; then
+            mike set-default --push latest
+          fi
