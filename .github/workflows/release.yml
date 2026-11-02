@@ -229,4 +229,3 @@ jobs:
             # Backport or prerelease: publish its docs without moving 'latest'.
             mike deploy --push "$VERSION"
           fi
-          
