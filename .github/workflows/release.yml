@@ -207,12 +207,10 @@ jobs:
           PRERELEASE: ${{ steps.meta.outputs.prerelease }}
           LATEST: ${{ steps.meta.outputs.latest }}
         run: |
-          export GH_HOST=$(echo "$GITHUB_SERVER_URL" | sed 's|https://||')
-          echo "$GH_TOKEN" | gh auth login --hostname "$GH_HOST" --with-token
           args=(--verify-tag --title "$TAG" --generate-notes "--latest=$LATEST")
           [[ -n "$PREV_TAG" ]] && args+=(--notes-start-tag "$PREV_TAG")
           [[ "$PRERELEASE" == "true" ]] && args+=(--prerelease)
-          gh release create "$TAG" dist/* "${args[@]}" --repo "${{ github.repository }}"
+          gh release create "$TAG" dist/* "${args[@]}"
 
       - name: Install docs dependencies
         if: inputs.repository == 'pypi'
