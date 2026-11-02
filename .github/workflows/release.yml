@@ -175,19 +175,18 @@ jobs:
             exit 1
           fi
 
+      - name: Publish to TestPyPI
+        if: inputs.repository == 'testpypi'
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true # makes reruns safe
+
       - name: Publish to PyPI
-        env:
-          TARGET: ${{ inputs.repository }}
-        run: |
-          # --check-url makes reruns safe: files already on the index are skipped.
-          if [[ "$TARGET" == "testpypi" ]]; then
-            uv publish \
-              --publish-url https://test.pypi.org/legacy/ \
-              --check-url https://test.pypi.org/simple/ \
-              dist/*
-          else
-            uv publish --check-url https://pypi.org/simple/ dist/*
-          fi
+        if: inputs.repository == 'pypi'
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          skip-existing: true # makes reruns safe
 
       - name: Push version bump and tag to release branch
         if: inputs.repository == 'pypi'
