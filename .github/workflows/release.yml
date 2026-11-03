@@ -1,0 +1,231 @@
+name: Build & Release
+
+# Release flow (run on a release/* branch):
+#   1. Pick a bump (patch / minor / major) or type an explicit version
+#   2. Workflow bumps the version in pyproject.toml (and uv.lock)
+#   3. Builds, publishes to PyPI, creates the GitHub release and docs
+#   4. Pushes the version-bump commit and tag back to the release branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump (ignored if 'version' is set)"
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+      version:
+        description: "Explicit version instead of a bump, e.g. 1.4.0 or 1.4.0rc1 (optional)"
+        type: string
+        required: false
+      repository:
+        description: "testpypi = rehearsal only (no push, tag, release or docs)"
+        type: choice
+        options: [pypi, testpypi]
+        default: pypi
+
+permissions:
+  contents: write
+  id-token: write # PyPI Trusted Publishing (OIDC)
+
+# Never run two releases at once; they would race for the same version number.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    # Only release from release/* branches.
+    if: startsWith(github.ref, 'refs/heads/release/')
+    runs-on: ubuntu-latest
+    # Environment named after the target (pypi / testpypi). Its protection rules
+    # (required reviewers, allowed branches) and secrets live in repo settings,
+    # so they cannot be bypassed by editing this file.
+    environment: ${{ inputs.repository }}
+    steps:
+      - name: Require admin role
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTOR: ${{ github.triggering_actor }}
+          ALLOWED_ROLES: "admin"
+        run: |
+          export GH_HOST=$(echo "$GITHUB_SERVER_URL" | sed 's|https://||')
+          role=$(gh api "repos/${GITHUB_REPOSITORY}/collaborators/${ACTOR}/permission" --jq '.role_name')
+          echo "$ACTOR has role: $role"
+          if [[ " $ALLOWED_ROLES " != *" $role "* ]]; then
+            echo "::error::$ACTOR ($role) is not allowed to release. Required: $ALLOWED_ROLES."
+            exit 1
+          fi
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0 # full history + tags
+
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
+        with:
+          version: "0.11.11"
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version-file: ".python-version"
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Verify lockfile is up-to-date
+        run: uv lock --check
+
+      - name: Bump version in pyproject.toml
+        id: version
+        env:
+          BUMP: ${{ inputs.bump }}
+          EXPLICIT: ${{ inputs.version }}
+        run: |
+          OLD=$(uv version --short)
+          if [[ -n "$EXPLICIT" ]]; then
+            uv version "${EXPLICIT#v}" --no-sync
+          else
+            uv version --bump "$BUMP" --no-sync
+          fi
+          NEW=$(uv version --short)
+          echo "Bumped $OLD -> $NEW"
+
+          if git rev-parse "v$NEW" >/dev/null 2>&1; then
+            echo "::error::Tag v$NEW already exists."
+            exit 1
+          fi
+
+          echo "old=$OLD" >> "$GITHUB_OUTPUT"
+          echo "version=$NEW" >> "$GITHUB_OUTPUT"
+          echo "tag=v$NEW" >> "$GITHUB_OUTPUT"
+
+      - name: Work out release metadata
+        id: meta
+        env:
+          NEW: ${{ steps.version.outputs.version }}
+        run: |
+          uv run --no-project --with packaging python - <<'PY'
+          import os, subprocess
+          from packaging.version import Version, InvalidVersion
+
+          new = Version(os.environ["NEW"])
+          stable = []
+          for t in subprocess.run(["git", "tag", "--list", "v*"],
+                                  capture_output=True, text=True, check=True).stdout.split():
+              try:
+                  v = Version(t[1:])
+              except InvalidVersion:
+                  continue
+              if not v.is_prerelease:
+                  stable.append(v)
+
+          # Latest = newest stable overall. A patch on an older release branch
+          # (backport) must not take over the 'latest' release or docs alias.
+          is_latest = not new.is_prerelease and all(new > v for v in stable)
+          prev = max((v for v in stable if v < new), default=None)
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"prerelease={str(new.is_prerelease).lower()}\n")
+              f.write(f"latest={str(is_latest).lower()}\n")
+              f.write(f"prev_tag={'v' + str(prev) if prev else ''}\n")
+          print(f"prerelease={new.is_prerelease} latest={is_latest} prev={prev}")
+          PY
+
+      - name: Commit version bump and tag locally
+        env:
+          OLD: ${{ steps.version.outputs.old }}
+          NEW: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          git add pyproject.toml uv.lock
+          git commit -m "chore(release): bump version $OLD -> $NEW"
+          git tag -a "$TAG" -m "Release $TAG"
+
+      - name: Build sdist and wheel
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          rm -rf dist
+          uv build
+          shopt -s nullglob
+          wheels=(dist/*-"$VERSION"-*.whl)
+          sdists=(dist/*-"$VERSION".tar.gz)
+          if [[ ${#wheels[@]} -ne 1 || ${#sdists[@]} -ne 1 ]]; then
+            echo "::error::Expected one wheel and one sdist for version $VERSION."
+            ls -la dist
+            exit 1
+          fi
+
+      - name: Check package metadata
+        run: uvx twine check --strict dist/*
+
+      # Fail before publishing if someone pushed to the branch during this run,
+      # otherwise the bump commit could not be pushed after PyPI has the release.
+      - name: Ensure release branch has not moved
+        if: inputs.repository == 'pypi'
+        env:
+          BRANCH: ${{ github.ref_name }}
+          STARTED_AT: ${{ github.sha }}
+        run: |
+          remote=$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)
+          if [[ "$remote" != "$STARTED_AT" ]]; then
+            echo "::error::$BRANCH moved from $STARTED_AT to $remote during the run. Re-run the workflow."
+            exit 1
+          fi
+
+      - name: Publish to TestPyPI
+        if: inputs.repository == 'testpypi'
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true # makes reruns safe
+
+      - name: Publish to PyPI
+        if: inputs.repository == 'pypi'
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          skip-existing: true # makes reruns safe
+
+      - name: Push version bump and tag to release branch
+        if: inputs.repository == 'pypi'
+        env:
+          BRANCH: ${{ github.ref_name }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          # Atomic: either both the commit and the tag land, or neither does.
+          git push --atomic origin "HEAD:refs/heads/$BRANCH" "refs/tags/$TAG"
+
+      - name: Create GitHub Release
+        if: inputs.repository == 'pypi'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+          PREV_TAG: ${{ steps.meta.outputs.prev_tag }}
+          PRERELEASE: ${{ steps.meta.outputs.prerelease }}
+          LATEST: ${{ steps.meta.outputs.latest }}
+        run: |
+          args=(--verify-tag --title "$TAG" --generate-notes "--latest=$LATEST")
+          [[ -n "$PREV_TAG" ]] && args+=(--notes-start-tag "$PREV_TAG")
+          [[ "$PRERELEASE" == "true" ]] && args+=(--prerelease)
+          gh release create "$TAG" dist/* "${args[@]}"
+
+      - name: Install docs dependencies
+        if: inputs.repository == 'pypi'
+        run: pip install mkdocs-material "mkdocstrings[python]" mike
+
+      - name: Deploy versioned docs
+        if: inputs.repository == 'pypi'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          LATEST: ${{ steps.meta.outputs.latest }}
+        run: |
+          git fetch origin gh-pages --depth=1
+          if [[ "$LATEST" == "true" ]]; then
+            mike deploy --push --alias-type redirect --update-aliases "$VERSION" latest
+            mike set-default --push latest
+          else
+            # Backport or prerelease: publish its docs without moving 'latest'.
+            mike deploy --push "$VERSION"
+          fi
