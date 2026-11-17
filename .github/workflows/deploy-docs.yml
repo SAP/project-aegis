@@ -36,8 +36,12 @@ jobs:
       - name: Deploy dev docs
         run: mike deploy --push dev
 
-      - name: Keep latest as default docs version
+      - name: Ensure a default docs version (root redirect)
         run: |
+          # Root '/' only redirects when a default is set. Prefer 'latest'
+          # (set by a real release); fall back to 'dev' so '/' never 404s.
           if mike list | awk '/\[[^]]*latest[^]]*\]/ { found = 1 } END { exit found ? 0 : 1 }'; then
             mike set-default --push latest
+          else
+            mike set-default --push dev
           fi
