@@ -18,11 +18,6 @@ on:
         description: "Explicit version instead of a bump, e.g. 1.4.0 or 1.4.0rc1 (optional)"
         type: string
         required: false
-      repository:
-        description: "testpypi = rehearsal only (no push, tag, release or docs)"
-        type: choice
-        options: [pypi, testpypi]
-        default: pypi
 
 permissions:
   contents: write
@@ -38,10 +33,10 @@ jobs:
     # Only release from release/* branches.
     if: startsWith(github.ref, 'refs/heads/release/')
     runs-on: ubuntu-latest
-    # Environment named after the target (pypi / testpypi). Its protection rules
-    # (required reviewers, allowed branches) and secrets live in repo settings,
-    # so they cannot be bypassed by editing this file.
-    environment: ${{ inputs.repository }}
+    # Environment name comes from the repo variable RELEASE_ENVIRONMENT. Its
+    # protection rules (required reviewers, allowed branches) and secrets live
+    # in repo settings, so they cannot be bypassed by editing this file.
+    environment: ${{ vars.RELEASE_ENVIRONMENT }}
     steps:
       - name: Require admin role
         env:
@@ -164,7 +159,6 @@ jobs:
       # Fail before publishing if someone pushed to the branch during this run,
       # otherwise the bump commit could not be pushed after PyPI has the release.
       - name: Ensure release branch has not moved
-        if: inputs.repository == 'pypi'
         env:
           BRANCH: ${{ github.ref_name }}
           STARTED_AT: ${{ github.sha }}
@@ -175,21 +169,12 @@ jobs:
             exit 1
           fi
 
-      - name: Publish to TestPyPI
-        if: inputs.repository == 'testpypi'
-        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          skip-existing: true # makes reruns safe
-
       - name: Publish to PyPI
-        if: inputs.repository == 'pypi'
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
         with:
           skip-existing: true # makes reruns safe
 
       - name: Push version bump and tag to release branch
-        if: inputs.repository == 'pypi'
         env:
           BRANCH: ${{ github.ref_name }}
           TAG: ${{ steps.version.outputs.tag }}
@@ -198,7 +183,6 @@ jobs:
           git push --atomic origin "HEAD:refs/heads/$BRANCH" "refs/tags/$TAG"
 
       - name: Create GitHub Release
-        if: inputs.repository == 'pypi'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.version.outputs.tag }}
@@ -212,11 +196,9 @@ jobs:
           gh release create "$TAG" dist/* "${args[@]}"
 
       - name: Install docs dependencies
-        if: inputs.repository == 'pypi'
         run: pip install mkdocs-material "mkdocstrings[python]" mike
 
       - name: Deploy versioned docs
-        if: inputs.repository == 'pypi'
         env:
           VERSION: ${{ steps.version.outputs.version }}
           LATEST: ${{ steps.meta.outputs.latest }}
