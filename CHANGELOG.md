@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`PiiSanitizer` mutation validator** — detect and redact Personally Identifiable Information (PII) including emails, phone numbers, credit card numbers (validated via Luhn algorithm), IBANs, Social Security numbers (SSNs), and IPv4 addresses. Supports selective entity filtering and custom mask formats under both `MutationGuard` (redaction) and `Guard` (detection).
+
 ## [1.0.0] - 2026-10-27
 
 First public release. `aegis` is a deterministic guardrail engine for AI systems: a

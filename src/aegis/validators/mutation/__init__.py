@@ -40,5 +40,6 @@ Example
 """
 
 from aegis.validators.mutation.html_sanitizer import HtmlSanitizer
+from aegis.validators.mutation.pii_sanitizer import PiiEntity, PiiSanitizer
 
-__all__ = ["HtmlSanitizer"]
+__all__ = ["HtmlSanitizer", "PiiEntity", "PiiSanitizer"]

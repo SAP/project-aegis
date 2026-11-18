@@ -104,5 +104,6 @@ nav:
       - XXE Detector: validators/detection/xxe-detector.md
     - Mutation:
       - HTML Sanitizer: validators/mutation/html-sanitizer.md
+      - PII Sanitizer: validators/mutation/pii-sanitizer.md
   - API Reference: api-reference.md
   - Changelog: changelog.md
