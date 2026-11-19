@@ -1,0 +1,73 @@
+name: Feature Request
+description: Suggest a new validator, capability, or improvement for Project Aegis.
+title: "feat: <short summary>"
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement to Project Aegis.
+
+        Per our [contribution guidelines](https://github.com/SAP/project-aegis/blob/main/CONTRIBUTING.md),
+        please open an issue describing the problem *before* starting work, so a
+        maintainer can discuss the approach and assign it to you.
+
+        > [!WARNING]
+        > **A suspected detector bypass is a security vulnerability, not a feature
+        > request.** If you can slip a payload past a validator, please report it
+        > privately through our [security policy](https://github.com/SAP/project-aegis/security/policy)
+        > instead — this form creates a **public** issue. For ordinary feature
+        > discussion, use short, synthetic (made-up) examples, never a working exploit.
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      description: Please confirm the following before submitting.
+      options:
+        - label: I have searched the [existing issues](https://github.com/SAP/project-aegis/issues) and this is not a duplicate.
+          required: true
+        - label: This feature fits a composable, deterministic guardrail library (not an application- or product-specific need).
+          required: true
+  - type: textarea
+    attributes:
+      label: Problem / motivation
+      description: Describe the problem you are trying to solve, and what is missing or frustrating today.
+      placeholder: "I'm trying to guard against ..., but Project Aegis currently cannot ..."
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed solution
+      description: A clear and concise description of what you would like to happen. A sketch of the API or validator usage is very welcome.
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Affected area
+      description: Select the part of Project Aegis this change would touch. Choose the closest match.
+      multiple: false
+      options:
+        - "A detection validator (ContentFilter, Xss/Xxe/SqlInjection/FormulaInjection, PromptLeakageCheck, Length/Size, ...)"
+        - "A mutation validator (HtmlSanitizer, ...)"
+        - "Guard engine (concurrent detection)"
+        - "MutationGuard engine (sequential repair)"
+        - "Normalization (homoglyphs, NFKC, variation selectors)"
+        - "A2A integration (GuardedAgentExecutor / @guarded)"
+        - "Telemetry (OpenTelemetry spans)"
+        - "Custom validator authoring / the validator contract"
+        - "Documentation"
+        - "Other / not sure"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Alternatives considered
+      description: Any alternative solutions or workarounds you have considered.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Anything else that might help us evaluate the request (links, prior art, synthetic example payloads).
+    validations:
+      required: false
