@@ -1,0 +1,113 @@
+name: Bug Report
+description: Report a reproducible bug in Project Aegis (a validator, the Guard engine, normalization, or the A2A wrapper).
+title: "bug: <short summary>"
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report.
+
+        > [!WARNING]
+        > **Do not report security vulnerabilities here.** Project Aegis is a
+        > security library, and this form creates a **public** issue. If you have
+        > found a possible vulnerability (for example, a bypass of a detector),
+        > please follow our [security policy](https://github.com/SAP/project-aegis/security/policy)
+        > instead. Do not include working exploit payloads in a public issue.
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      description: Please confirm the following before submitting.
+      options:
+        - label: I have searched the [existing issues](https://github.com/SAP/project-aegis/issues) and this is not a duplicate.
+          required: true
+        - label: This is a bug, not a suspected security vulnerability (those go through the [security policy](https://github.com/SAP/project-aegis/security/policy)).
+          required: true
+        - label: I am using a supported Python version (>= 3.13).
+          required: true
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is and what actually happened.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Steps, or ideally a minimal, self-contained code snippet, that reproduce the behaviour.
+      placeholder: |
+        1. Build a `Guard(...)` with `...`
+        2. Call `await guard.validate(value="...")`
+        3. Observe `result.failures` / the raised error
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behaviour
+      description: What you expected to happen instead.
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Affected area
+      description: Select the part of Project Aegis the bug affects. Choose the closest match.
+      multiple: false
+      options:
+        - "A detection validator (ContentFilter, Xss/Xxe/SqlInjection/FormulaInjection, PromptLeakageCheck, Length/Size, ...)"
+        - "A mutation validator (HtmlSanitizer, ...)"
+        - "Guard engine (concurrent detection)"
+        - "MutationGuard engine (sequential repair)"
+        - "Normalization (homoglyphs, NFKC, variation selectors)"
+        - "A2A integration (GuardedAgentExecutor / @guarded)"
+        - "Telemetry (OpenTelemetry spans)"
+        - "Custom validator authoring / the validator contract"
+        - "Documentation"
+        - "Other / not sure"
+    validations:
+      required: true
+  - type: input
+    id: python-version
+    attributes:
+      label: Python version
+      description: Output of `python3 --version`.
+      placeholder: "3.13.1"
+    validations:
+      required: true
+  - type: input
+    id: aegis-version
+    attributes:
+      label: Project Aegis version
+      description: The release tag, or the Git commit you installed (installation is currently from Git).
+      placeholder: "v1.0.0, or git commit abc1234"
+    validations:
+      required: true
+  - type: input
+    id: a2a-sdk-version
+    attributes:
+      label: a2a-sdk version
+      description: Only if the bug involves the A2A integration. Paste the output of `pip show a2a-sdk`. The 0.3.x and 1.x lines run different code paths, so the exact version matters.
+      placeholder: "1.0.3"
+    validations:
+      required: false
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      description: Name and version.
+      placeholder: "macOS 14.5, Ubuntu 22.04, Windows 11, ..."
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Logs / traceback
+      description: Any relevant error message or traceback. Please remove sensitive information.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Anything else that might help us understand the problem.
+    validations:
+      required: false
