@@ -32,7 +32,7 @@ jobs:
         # Pin to a full commit SHA, not a moving tag: a tag can be repointed to
         # new code that would then run in CI, so pinning freezes exactly what
         # runs. The trailing comment records the human-readable version.
-        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d  # v10.4.0
 
       - name: Install dev dependencies
         # --extra dev pulls ruff + pyright (and pytest) from pyproject.toml; all
