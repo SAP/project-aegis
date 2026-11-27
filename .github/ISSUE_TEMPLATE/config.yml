@@ -1,16 +1,14 @@
 # Issue templates: https://docs.github.com/communities/using-templates-to-encourage-useful-issues-and-pull-requests
-# Blank issues are disabled so that every report follows a template and
-# suspected vulnerabilities are steered to the security policy instead.
+# Blank issues are disabled so that every report follows a template. Suspected
+# vulnerabilities are handled by GitHub's automatic "Report a security
+# vulnerability" link, which it adds to the chooser because a security policy is
+# inherited from the SAP organization. We deliberately do not add our own
+# security contact_link here, because it would duplicate that automatic entry.
 blank_issues_enabled: false
-contact_links:
-  - name: Report a security vulnerability
-    url: https://github.com/SAP/project-aegis/security/policy
-    about: >-
-      Project Aegis is a security library. Please report suspected
-      vulnerabilities privately via our security policy — do not open a
-      public issue.
-  # GitHub Discussions is not enabled yet. Once it is, uncomment the link
-  # below to route usage questions and general support there.
-  # - name: Questions & support
-  #   url: https://github.com/SAP/project-aegis/discussions
-  #   about: Ask usage questions and discuss ideas in GitHub Discussions.
+
+# GitHub Discussions is not enabled yet. Once it is, add a contact_links block
+# here to route usage questions and general support there, for example:
+#   contact_links:
+#     - name: Questions & support
+#       url: https://github.com/SAP/project-aegis/discussions
+#       about: Ask usage questions and discuss ideas in GitHub Discussions.
